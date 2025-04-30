@@ -3,14 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Flask UI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>TextInsight</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="../static/chatbot.js"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Welcome to My Flask UI</h1>
-        <p>This is a simple UI built with Flask.</p>
-        <a href="{{ url_for('form') }}">Go to Form Page</a>
+<body class="dark-theme">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div id="sidebar" class="p-3 dark-theme">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <img src="../static/images/logo_dark.png" alt="Dark Logo" class="logo-img logo-dark">
+                        <img src="../static/images/logo_light.png" alt="Light Logo" class="logo-img logo-light">
+                    </div>
+                    <div>
+                        <button id="toggle-theme" class="btn btn-outline-light btn-sm">🌙</button>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start">🔍</span>
+                    <input type="text" class="form-control rounded-end bg-dark text-white" placeholder="Search chats...">
+                </div>
+                <button class="btn btn-primary w-100 mb-3">+ Create new chat</button>
+                <div class="chat-list">
+                    <h6>Today</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Sample Chat Today</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Yesterday</h6>
+                    <ul class="list-group mb-3">
+                        <!-- No chats under Yesterday -->
+                    </ul>
+                    <h6>Previous 7 Days</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Dyna-Q Agent Exploration Strategies and Algorithms</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Dyna-Q Hyperparameters Tuning for Optimal Performance</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Neural Network Churn Prediction</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Previous 30 Days</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">SortedDoublyLinkedList Overview and Implementation</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Application Process Flow</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Months</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Old Chat from June</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Year</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Chat from 2023</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Main Content Area -->
+            <div id="main-content">
+                <h2>Main Content Area</h2>
+                <p>This is where the chat or other content would appear.</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
