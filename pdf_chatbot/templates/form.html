@@ -33,7 +33,6 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            overflow-x: hidden; /* Prevent horizontal scrolling on the entire page */
         }
 
         #sidebar {
@@ -179,15 +178,9 @@
         }
 
         #main-content {
-            position: fixed; /* Fix position beside the sidebar */
-            left: 250px; /* Start after the sidebar */
-            top: 0;
-            width: calc(100% - 250px); /* Take remaining width */
-            height: 100vh; /* Full height of the viewport */
-            overflow-y: auto; /* Allow vertical scrolling if content overflows */
-            overflow-x: hidden; /* Prevent horizontal scrolling */
+            margin-left: 250px;
             padding: 20px;
-            box-sizing: border-box; /* Ensure padding doesn't affect width */
+            overflow-x: 0px;
         }
 
         /* Search bar outline and theme styles */
