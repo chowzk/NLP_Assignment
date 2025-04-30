@@ -1,0 +1,470 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form - Flask UI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Form Page</h1>
+        <p>{{ message }}</p>
+        <form method="POST" action="{{ url_for('form') }}">
+            <label for="name">Enter your name:</label>
+            <input type="text" id="name" name="name" required>
+            <button type="submit">Submit</button>
+        </form>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Sidebar UI</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            background-color: #212529;
+            color: white;
+            --chat-bg: #212529;
+        }
+
+        .chat-list {
+            max-height: 70vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .chat-name {
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .chat-name::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(to right, transparent, var(--chat-bg));
+        }
+
+        .list-group-item:hover {
+            background-color: #495057;
+        }
+
+        .list-group-item .dropdown {
+            visibility: hidden;
+        }
+
+        .list-group-item:hover .dropdown {
+            visibility: visible;
+        }
+
+        .dropdown-menu {
+            background-color: #343a40;
+        }
+
+        .dropdown-item {
+            color: white;
+        }
+
+        .dropdown-item:hover {
+            background-color: #495057;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0;
+            font-size: 1.2rem;
+        }
+
+        .dropdown-toggle:focus {
+            outline: none;
+        }
+
+        body.dark-theme {
+            background-color: #212529;
+            color: white;
+        }
+
+        body.light-theme {
+            background-color: #f4f4f4;
+            color: black;
+        }
+
+        #sidebar.dark-theme {
+            background-color: #212529;
+            color: white;
+            --chat-bg: #212529;
+        }
+
+        #sidebar.light-theme {
+            background-color: #ffffff;
+            color: black;
+            --chat-bg: #ffffff;
+        }
+
+        .list-group-item.dark-theme {
+            color: white;
+        }
+
+        .list-group-item.light-theme {
+            color: black;
+        }
+
+        .list-group-item.light-theme:hover {
+            background-color: #e9ecef;
+        }
+
+        #sidebar.dark-theme .chat-list::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #sidebar.dark-theme .chat-list::-webkit-scrollbar-track {
+            background: var(--chat-bg);
+        }
+
+        #sidebar.dark-theme .chat-list::-webkit-scrollbar-thumb {
+            background: #495057;
+        }
+
+        #sidebar.light-theme .chat-list::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #sidebar.light-theme .chat-list::-webkit-scrollbar-track {
+            background: var(--chat-bg);
+        }
+
+        #sidebar.light-theme .chat-list::-webkit-scrollbar-thumb {
+            background: #ced4da;
+        }
+
+        #main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* Search bar outline and theme styles */
+        .input-group-text {
+            border: 1px solid white;
+        }
+
+        .form-control {
+            border: 1px solid white;
+        }
+
+        #sidebar.dark-theme .input-group-text {
+            background-color: #343a40;
+            color: white;
+            border-color: white;
+        }
+
+        #sidebar.dark-theme .form-control {
+            background-color: #343a40;
+            color: white;
+            border-color: white;
+        }
+
+        #sidebar.dark-theme .form-control::placeholder {
+            color: #adb5bd;
+        }
+
+        #sidebar.light-theme .input-group-text {
+            background-color: #f8f9fa;
+            color: black;
+            border-color: black;
+        }
+
+        #sidebar.light-theme .form-control {
+            background-color: #f8f9fa;
+            color: black;
+            border-color: black;
+        }
+
+        #sidebar.light-theme .form-control::placeholder {
+            color: #6c757d;
+        }
+
+        /* Logo styling */
+        .logo-img {
+            height: 40px;
+            width: auto;
+            display: none; /* Hidden by default */
+        }
+
+        #sidebar.dark-theme .logo-dark {
+            display: block; /* Show dark logo in dark theme */
+        }
+
+        #sidebar.light-theme .logo-light {
+            display: block; /* Show light logo in light theme */
+        }
+
+        /* Bold section headings */
+        .chat-list h6 {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div id="sidebar" class="p-3 dark-theme">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <img src="../static/images/logo_dark.png" alt="Dark Logo" class="logo-img logo-dark">
+                        <img src="../static/images/logo_light.png" alt="Light Logo" class="logo-img logo-light">
+                    </div>
+                    <div>
+                        <button id="toggle-theme" class="btn btn-outline-light btn-sm">🌙</button>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text rounded-start">🔍</span>
+                    <input type="text" class="form-control rounded-end bg-dark text-white" placeholder="Search chats...">
+                </div>
+                <button class="btn btn-primary w-100 mb-3">+ Create new chat</button>
+                <div class="chat-list">
+                    <h6>Today</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Sample Chat Today</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Yesterday</h6>
+                    <ul class="list-group mb-3">
+                        <!-- No chats under Yesterday -->
+                    </ul>
+                    <h6>Previous 7 Days</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Dyna-Q Agent Exploration Strategies and Algorithms</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Dyna-Q Hyperparameters Tuning for Optimal Performance</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Neural Network Churn Prediction</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Previous 30 Days</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">SortedDoublyLinkedList Overview and Implementation</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Application Process Flow</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Months</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Old Chat from June</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <h6>Year</h6>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
+                            <span class="chat-name">Chat from 2023</span>
+                            <div class="dropdown">
+                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⋮
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="#">Download</a></li>
+                                    <li><a class="dropdown-item" href="#">Rename</a></li>
+                                    <li><a class="dropdown-item" href="#">Archive</a></li>
+                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Main Content Area -->
+            <div id="main-content">
+                <h2>Main Content Area</h2>
+                <p>This is where the chat or other content would appear.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme toggle
+        document.getElementById('toggle-theme').addEventListener('click', function() {
+            const body = document.body;
+            const sidebar = document.getElementById('sidebar');
+            const chatItems = document.querySelectorAll('.list-group-item');
+            const toggleButton = this;
+            const searchInput = document.querySelector('.form-control');
+            const searchIcon = document.querySelector('.input-group-text');
+            const dropdownButtons = document.querySelectorAll('.dropdown-toggle');
+            const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+
+            if (body.classList.contains('dark-theme')) {
+                body.classList.replace('dark-theme', 'light-theme');
+                sidebar.classList.replace('dark-theme', 'light-theme');
+                chatItems.forEach(item => item.classList.replace('dark-theme', 'light-theme'));
+                toggleButton.classList.replace('btn-outline-light', 'btn-outline-dark');
+                toggleButton.textContent = '🌞';
+                searchInput.classList.remove('bg-dark', 'text-white');
+                searchIcon.classList.remove('bg-dark', 'text-white');
+                dropdownButtons.forEach(btn => btn.classList.replace('btn-dark', 'btn-light'));
+                dropdownMenus.forEach(menu => {
+                    menu.classList.replace('dropdown-menu-dark', 'dropdown-menu-light');
+                    menu.style.backgroundColor = '#ffffff';
+                    menu.querySelectorAll('.dropdown-item').forEach(item => {
+                        item.style.color = 'black';
+                        item.addEventListener('mouseover', () => item.style.backgroundColor = '#e9ecef');
+                        item.addEventListener('mouseout', () => item.style.backgroundColor = '');
+                    });
+                });
+            } else {
+                body.classList.replace('light-theme', 'dark-theme');
+                sidebar.classList.replace('light-theme', 'dark-theme');
+                chatItems.forEach(item => item.classList.replace('light-theme', 'dark-theme'));
+                toggleButton.classList.replace('btn-outline-dark', 'btn-outline-light');
+                toggleButton.textContent = '🌙';
+                searchInput.classList.add('bg-dark', 'text-white');
+                searchIcon.classList.add('bg-dark', 'text-white');
+                dropdownButtons.forEach(btn => btn.classList.replace('btn-light', 'btn-dark'));
+                dropdownMenus.forEach(menu => {
+                    menu.classList.replace('dropdown-menu-light', 'dropdown-menu-dark');
+                    menu.style.backgroundColor = '#343a40';
+                    menu.querySelectorAll('.dropdown-item').forEach(item => {
+                        item.style.color = 'white';
+                        item.addEventListener('mouseover', () => item.style.backgroundColor = '#495057');
+                        item.addEventListener('mouseout', () => item.style.backgroundColor = '');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

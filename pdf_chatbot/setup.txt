@@ -1,0 +1,21 @@
+Setup python for project
+1. Install python 3.13.3, make sure to check "Add Python to PATH" before clicking install
+2. In vs code, install pytohn extension
+3. In vs code, click ctrl shift p 
+3. Type and select Python: Select Interpreter.
+5. Select Interpreter (the python version installed)
+
+Set Up a Virtual Environment:
+1. Open the terminal in vs Code (Terminal > New Terminal)
+2. Create virtual environment: python -m venv venv
+3a. Activate it: venv\Scripts\activate
+b. If there's error means powershell execution policy is set to restricted
+c. run powershell as admin, run: Get-ExecutionPolicy
+d. then: Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned  (click y to confirm)
+e. try 3a again, it won't show the error again
+
+Run flask
+1. In the activated virtual environment, run pip install flask
+2. run python app.py (cd to project folder is haven't do so)
+3. then, ctrl click the local host url to run
+4. to stop ctrl c
