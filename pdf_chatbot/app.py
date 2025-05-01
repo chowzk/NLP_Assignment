@@ -17,16 +17,23 @@ def index():
 #         return render_template('form.html', message=f'Hello, {name}!')
 #     return render_template('form.html', message='Please enter your name.')
 
+# @app.route('/ask', methods=['POST'])
+# def ask():
+#     user_input = request.json.get('message')  # Get user input from frontend
+#     if not user_input:
+#         return jsonify({'error': 'No message provided'}), 400
+
+#     # Get the response from the chatbot logic module
+#     assistant_response = get_chatbot_response(user_input)
+
+#     return jsonify({'response': assistant_response})
+
 @app.route('/ask', methods=['POST'])
 def ask():
-    user_input = request.json.get('message')  # Get user input from frontend
+    user_input = request.json.get('message')
     if not user_input:
         return jsonify({'error': 'No message provided'}), 400
-
-    # Get the response from the chatbot logic module
-    assistant_response = get_chatbot_response(user_input)
-
-    return jsonify({'response': assistant_response})
+    return get_chatbot_response(user_input)
 
 if __name__ == '__main__':
     app.run(debug=True)
