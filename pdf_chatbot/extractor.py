@@ -94,30 +94,50 @@ class pdf_Extractor:
                 return True
         return False
         
+    # @classmethod
+    # def process_file(cls,file_path):
+    #     """Process a file, check for duplicates, and return a tokenized DataFrame."""
+    #     # Check for duplicate file name
+    #     file_name = os.path.basename(file_path)
+    #     if file_name in cls.uploaded_files:
+    #         print(f"Error: File '{file_name}' has already been uploaded. Please upload a different file.")
+    #         return None
+
+    #     raw_text = pdf_Extractor.read_file(file_path)
+    #     if raw_text is None:
+    #         print("")
+    #         return None
+        
+    #     cleaned_text = preprocess.clean_text(raw_text)
+    #     if cls.is_duplicate(cleaned_text):
+    #         print("Error: Uploaded document is too similar")
+    #         return None
+
+    #     pdf_Extractor.uploaded_files.add(file_name)
+
+    #     pdf_Extractor.uploaded_texts.append(cleaned_text)
+        
+    #     return raw_text
+
     @classmethod
     def process_file(cls,file_path):
         """Process a file, check for duplicates, and return a tokenized DataFrame."""
         # Check for duplicate file name
         file_name = os.path.basename(file_path)
         if file_name in cls.uploaded_files:
-            print(f"Error: File '{file_name}' has already been uploaded. Please upload a different file.")
-            return None
-
+            return False, "File already uploaded", None
         raw_text = pdf_Extractor.read_file(file_path)
         if raw_text is None:
-            print("")
-            return None
-        
+            return False, "Failed to read file (unsupported extension)", None
         cleaned_text = preprocess.clean_text(raw_text)
         if cls.is_duplicate(cleaned_text):
-            print("Error: Uploaded document is too similar")
-            return None
+            return False, "Document is too similar to an existing one", None
 
         pdf_Extractor.uploaded_files.add(file_name)
 
         pdf_Extractor.uploaded_texts.append(cleaned_text)
         
-        return raw_text
+        return True, "Success", raw_text
 
     @staticmethod
     def select_file():

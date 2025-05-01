@@ -18,7 +18,8 @@ def get_chatbot_response(user_input):
     try:
         stream = client.chat.completions.create(
             model="deepseek/deepseek-r1:free",  # Verify this model name with OpenRouter
-            messages=[{"role": "user", "content": user_input}],
+            #messages=[{"role": "user", "content": user_input}],
+            messages=conversation_history,
             stream=True
         )
         full_response = []
@@ -28,10 +29,10 @@ def get_chatbot_response(user_input):
                 full_response.append(content)
                 yield content.encode('utf-8')
 
-        conversation_history.append({
-            "role": "assistant",
-            "content":  "".join(full_response)
-        })
+            conversation_history.append({
+                "role": "assistant",
+                "content":  "".join(full_response)
+            })
 
         return Response(generate(), mimetype='text/plain')
     except Exception as e:

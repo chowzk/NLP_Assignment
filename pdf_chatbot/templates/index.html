@@ -947,16 +947,17 @@
                 </div>
                 <div class="input-area" id="input-area">
                     <div class="input-container dark-theme">
-                        <div class="icon-btn">
+                        <div class="icon-btn" id="upload-icon">
                             <img src="../static/images/upload_dark.png" alt="Upload" title="Upload Document" class="dark-icon">
                             <img src="../static/images/upload_light.png" alt="Upload" title="Upload Document" class="light-icon">
                         </div>
                         <textarea id="message-input" placeholder="Message TextInsight"></textarea>
-                        <div class="icon-btn" onclick="sendMessage()">
+                        <div class="icon-btn" onclick="sendMessage()" id="send-icon">
                             <img src="../static/images/send_dark.png" alt="Send" title="Send" class="dark-icon">
                             <img src="../static/images/send_light.png" alt="Send" title="Send" class="light-icon">
                         </div>
                     </div>
+                    <input type="file" id="file-input" style="display:none;">
                 </div>
             </div>
         </div>
@@ -965,6 +966,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let chatStarted = false;
+        let documentUploaded = false; // Track if a document is uploaded
+        let isGenerating = false;    // Track if a response is being generated
         const chatArea = document.getElementById('chat-area');
         const inputArea = document.getElementById('input-area');
         const messageInput = document.getElementById('message-input');
@@ -973,6 +976,10 @@
         const chatSearch = document.getElementById('chat-search');
         const chatTitle = document.querySelector('.chat-title');
         const inputContainer = document.querySelector('.input-container');
+
+        // Initially disable send icon
+        document.getElementById('send-icon').style.pointerEvents = 'none';
+        document.getElementById('send-icon').style.opacity = '0.5';
 
         // Auto-resize textarea based on content
         function autoResizeTextarea() {
@@ -1076,7 +1083,89 @@
             chatTitle.style.border = '1px solid transparent';
         });
 
+        // Upload icon click triggers file input
+        document.getElementById('upload-icon').addEventListener('click', function() {
+            document.getElementById('file-input').click();
+        });     
+
+        messageInput.addEventListener('click', function(e) {
+            e.stopPropagation(); // Ensure textarea click doesn't trigger file input
+            messageInput.focus(); // Explicitly focus the textarea
+        });
+
+        // Handle file selection and upload
+        document.getElementById('file-input').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                uploadFile(file);
+            }
+        });
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    documentUploaded = true;
+                    // Activate chat interface if not already started
+                    if (!chatStarted) {
+                        chatStarted = true;
+                        chatArea.classList.add('active');
+                        chatArea.querySelector('.greeting').remove();
+                        titleContainer.style.display = 'block';
+                        topIcons.style.display = 'flex';
+                        chatSearch.style.display = 'block';
+                        chatTitle.textContent = 'New Chat';
+                    }
+                    // Enable send icon and update placeholder
+                    document.getElementById('message-input').placeholder = 'Message TextInsight';
+                    document.getElementById('message-input').disabled = false;
+                    document.getElementById('send-icon').style.pointerEvents = 'auto';
+                    document.getElementById('send-icon').style.opacity = '1';
+                    // Display assistant's acknowledgment message
+                    const assistantMessageWrapper = document.createElement('div');
+                    assistantMessageWrapper.className = 'message-wrapper';
+                    const responseArea = document.createElement('div');
+                    responseArea.className = 'assistant-response';
+                    responseArea.innerHTML = `
+                        <div class="response-content">
+                            <p>${data.message}</p>
+                        </div>
+                        <div class="time-used"></div>
+                    `;
+                    assistantMessageWrapper.appendChild(responseArea);
+                    chatArea.appendChild(assistantMessageWrapper);
+                    chatArea.scrollTop = chatArea.scrollHeight;
+
+                    // const assistantMessageWrapper = document.createElement('div');
+                    // assistantMessageWrapper.className = 'message-wrapper';
+                    // const responseArea = document.createElement('div');
+                    // responseArea.className = 'assistant-response';
+                    // responseArea.innerHTML = `
+                    //     <div class="loading">Generating response...</div>
+                    //     <div class="response-content"></div>
+                    //     <div class="time-used"></div>
+                    // `;
+                    // assistantMessageWrapper.appendChild(responseArea);
+                    // chatArea.appendChild(assistantMessageWrapper);
+
+                } else {
+                    alert('Failed to upload document: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                alert('Error uploading document. Please try again.');
+            });
+        }
+
         async function sendMessage() {
+            if (!documentUploaded || isGenerating) return; // Check if document is uploaded and no response is generating
             const message = messageInput.value.trim();
             if (!message) return;
 
@@ -1084,15 +1173,15 @@
             messageInput.value = '';
             autoResizeTextarea();
 
-            if (!chatStarted) {
-                chatStarted = true;
-                chatArea.classList.add('active');
-                chatArea.querySelector('.greeting').remove();
-                titleContainer.style.display = 'block';
-                topIcons.style.display = 'flex';
-                chatSearch.style.display = 'block';
-                chatTitle.textContent = 'New Chat';
-            }
+            // if (!chatStarted) {
+            //     chatStarted = true;
+            //     chatArea.classList.add('active');
+            //     chatArea.querySelector('.greeting').remove();
+            //     titleContainer.style.display = 'block';
+            //     topIcons.style.display = 'flex';
+            //     chatSearch.style.display = 'block';
+            //     chatTitle.textContent = 'New Chat';
+            // }
 
             const userMessageWrapper = document.createElement('div');
             userMessageWrapper.className = 'message-wrapper';
@@ -1122,6 +1211,11 @@
 
             const startTime = Date.now();
             try {
+                isGenerating = true;
+                document.getElementById('send-icon').style.pointerEvents = 'none';
+                document.getElementById('send-icon').style.opacity = '0.5';
+                document.getElementById('message-input').disabled = true;
+
                 const response = await fetch('/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1147,6 +1241,10 @@
                         const endTime = Date.now();
                         const processTime = ((endTime - startTime) / 1000).toFixed(2);
                         responseArea.querySelector('.time-used').textContent = `Processed in ${processTime} seconds`;
+                        isGenerating = false;
+                        document.getElementById('send-icon').style.pointerEvents = 'auto';
+                        document.getElementById('send-icon').style.opacity = '1';
+                        document.getElementById('message-input').disabled = false;
                         return;
                     }
 
@@ -1166,6 +1264,10 @@
                 const endTime = Date.now();
                 const processTime = ((endTime - startTime) / 1000).toFixed(2);
                 responseArea.querySelector('.time-used').textContent = `Processed in ${processTime} seconds`;
+                isGenerating = false;
+                document.getElementById('send-icon').style.pointerEvents = 'auto';
+                document.getElementById('send-icon').style.opacity = '1';
+                document.getElementById('message-input').disabled = false;
             }
 
             chatArea.scrollTop = chatArea.scrollHeight;
@@ -1182,6 +1284,11 @@
             topIcons.style.display = 'none';
             chatSearch.style.display = 'none';
             chatStarted = false;
+            documentUploaded = false; // Reset document upload status
+            document.getElementById('send-icon').style.pointerEvents = 'none';
+            document.getElementById('send-icon').style.opacity = '0.5';
+            document.getElementById('message-input').placeholder = 'Upload a document to start chatting';
+            document.getElementById('message-input').disabled = false;
             autoResizeTextarea();
         }
 
@@ -1211,6 +1318,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'938f34927f07b02f',t:'MTc0NjEwMTczNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
