@@ -37,5 +37,3 @@ class TTS():
         except sr.RequestError as e:
             print("Could not request results from Google Speech Recognition.")
             return None
-
-        # print(text)
