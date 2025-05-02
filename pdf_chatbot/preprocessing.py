@@ -55,3 +55,20 @@ class preprocess:
         df.drop(columns="__joined_text__", inplace=True)
         
         return tfidf_df, feature_names
+
+
+    def is_duplicate(new_text, threshold=0.8):
+        texts_to_compare = uploaded_texts + [new_text]
+        
+        # Vectorize all documents
+        vectorizer = TfidfVectorizer(stop_words='english')
+        tfidf_matrix = vectorizer.fit_transform(texts_to_compare)
+        
+        # Compare new text to all existing ones
+        similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
+    
+        # If similarity to any existing doc ≥ 0.8, reject
+        for score in similarities[0]:
+            if score >= threshold:
+                return True
+        return False
