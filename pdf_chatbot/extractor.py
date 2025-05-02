@@ -11,6 +11,8 @@ from preprocessing import preprocess
 from sklearn.metrics.pairwise import cosine_similarity
 import tkinter as tk
 from tkinter import filedialog
+
+
 #To read files
 class pdf_Extractor:
     uploaded_files = set()
@@ -146,5 +148,57 @@ class pdf_Extractor:
             filetypes=[("All supported files", "*.pdf *.txt *.docx *.odt *.rtf")]
         )
         return file_path
+
+
+    @staticmethod
+    def is_query_relevant(query, similarity_threshold=0.05):
+        if not query:
+            return False, "Please input something"
+
         
+        texts = pdf_Extractor.uploaded_texts
+        if not texts:
+            return False, "No documents have been uploaded"
+        # Tokenize query to count words
+        query_tokens = word_tokenize(query.lower())
+        query_word_count = len([t for t in query_tokens if t.isalnum()])
+        # Create a keyword reference text for short queries
+        if query_word_count <= 10:
+            # Predefined query keywords
+            query_keywords = [
+                'summarize', 'what', 'explain', 'describe', 'how', 'why',
+                'pdf', 'document', 'is', 'are', 'define', 'overview'
+            ]
+            # Extract top document keywords using TF-IDF
+            vectorizer = TfidfVectorizer(stop_words='english', max_features=50)
+            tfidf_matrix = vectorizer.fit_transform(texts)
+            doc_keywords = vectorizer.get_feature_names_out()
+            # Combine keywords into a reference text
+            keyword_reference = ' '.join(query_keywords + list(doc_keywords))
+            # Compute cosine similarity between query and keyword reference
+            vectorizer = TfidfVectorizer(stop_words='english')
+            tfidf_vectors = vectorizer.fit_transform([keyword_reference, query])
+            if tfidf_vectors.shape[1] == 0:
+                return False, "Keyword reference is too sparse to process"
+            similarity = cosine_similarity(tfidf_vectors[1], tfidf_vectors[0])[0][0]
+            
+            if similarity >= similarity_threshold:
+                return True, f"Short query is relevant (similarity: {similarity:.2f})"
+            return False, "Short query is unrelated to documents"
+        # Standard TF-IDF similarity check for longer queries
+        vectorizer = TfidfVectorizer(stop_words='english')
+        tfidf_corpus = vectorizer.fit_transform(texts)
+        tfidf_query = vectorizer.transform([query])
+
+        # if tfidf_corpus.shape[1] == 0:
+        #     return False, "Document content is too sparse to process"
+
+        similarities = cosine_similarity(tfidf_query, tfidf_corpus)
+        max_similarity = similarities[0].max()
+
         
+        if max_similarity >= similarity_threshold:
+            return True, f"Query is relevant (similarity: {max_similarity:.2f})"
+        else:
+            return False, "Query is unrelated to uploaded documents"
+    

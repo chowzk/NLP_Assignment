@@ -32,6 +32,10 @@ def ask():
     user_input = request.json.get('message')
     if not user_input:
         return jsonify({'error': 'No message provided'}), 400
+
+    success,message = pdf_Extractor.is_query_relevant(user_input)
+    if not success:
+        return jsonify({'error':message}),400
     return get_chatbot_response(user_input)
 
 @app.route('/upload', methods=['POST'])
