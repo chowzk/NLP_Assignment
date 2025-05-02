@@ -4,10 +4,10 @@ from chatbot_convo import get_chatbot_response, conversation_history
 import nltk
 from extractor import pdf_Extractor
 import os
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
-nltk.download('wordnet', quiet=True)
-nltk.download('punkt_tab', quiet=True)
+# nltk.download('punkt', quiet=True)
+# nltk.download('stopwords', quiet=True)
+# nltk.download('wordnet', quiet=True)
+# nltk.download('punkt_tab', quiet=True)
 
 app = Flask(__name__)
 

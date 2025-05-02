@@ -469,6 +469,12 @@
             border-radius: 5px;
             padding: 2px 5px;
             color: var(--text-color);
+            width: auto;
+            max-width: 900px; /* Limit width to prevent overflow */
+            /* line-height: 24px; */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .chat-title:hover {
@@ -478,6 +484,11 @@
         .chat-title.editing {
             border: 1px solid #0084ff;
             outline: none;
+            white-space: nowrap; /* Prevent wrapping to keep single line */
+            overflow-x: hidden;
+            overflow-y: hidden;
+            text-overflow: clip;
+            text-align: left;
         }
 
         .top-icons {
@@ -492,7 +503,7 @@
             cursor: pointer;
         }
 
-        .chat-search {
+        /* .chat-search {
             display: none;
             position: absolute;
             left: 20px;
@@ -537,7 +548,7 @@
 
         .chat-search.light-theme .form-control::placeholder {
             color: #6c757d;
-        }
+        } */
 
         .dropdown {
             position: relative;
@@ -915,12 +926,12 @@
             <!-- Main Content Area (Chat Interface) -->
             <div id="main-content">
                 <div class="chat-header">
-                    <div class="chat-search dark-theme" id="chat-search">
+                    <!-- <div class="chat-search dark-theme" id="chat-search">
                         <div class="input-group">
                             <span class="input-group-text rounded-start">🔍</span>
                             <input type="text" class="form-control rounded-end" placeholder="Search conversation...">
                         </div>
-                    </div>
+                    </div> -->
                     <div class="title-container" id="title-container">
                         <span class="chat-title" contenteditable="false">New Chat</span>
                     </div>
@@ -951,7 +962,7 @@
                             <img src="../static/images/upload_dark.png" alt="Upload" title="Upload Document" class="dark-icon">
                             <img src="../static/images/upload_light.png" alt="Upload" title="Upload Document" class="light-icon">
                         </div>
-                        <textarea id="message-input" placeholder="Message TextInsight"></textarea>
+                        <textarea id="message-input" placeholder="Upload a document to start chatting"></textarea>
                         <div class="icon-btn" onclick="sendMessage()" id="send-icon">
                             <img src="../static/images/send_dark.png" alt="Send" title="Send" class="dark-icon">
                             <img src="../static/images/send_light.png" alt="Send" title="Send" class="light-icon">
@@ -973,7 +984,7 @@
         const messageInput = document.getElementById('message-input');
         const titleContainer = document.getElementById('title-container');
         const topIcons = document.getElementById('top-icons');
-        const chatSearch = document.getElementById('chat-search');
+        // const chatSearch = document.getElementById('chat-search');
         const chatTitle = document.querySelector('.chat-title');
         const inputContainer = document.querySelector('.input-container');
 
@@ -999,8 +1010,8 @@
             const toggleButton = this;
             const searchInput = document.querySelector('#sidebar .form-control');
             const searchIcon = document.querySelector('#sidebar .input-group-text');
-            const chatSearchInput = document.querySelector('#chat-search .form-control');
-            const chatSearchIcon = document.querySelector('#chat-search .input-group-text');
+            // const chatSearchInput = document.querySelector('#chat-search .form-control');
+            // const chatSearchIcon = document.querySelector('#chat-search .input-group-text');
             const dropdownButtons = document.querySelectorAll('.dropdown-toggle');
             const dropdownMenus = document.querySelectorAll('.dropdown-menu');
             const chatArea = document.getElementById('chat-area');
@@ -1009,15 +1020,15 @@
                 body.setAttribute('data-theme', 'light');
                 sidebar.classList.replace('dark-theme', 'light-theme');
                 chatItems.forEach(item => item.classList.replace('dark-theme', 'light-theme'));
-                chatSearch.classList.replace('dark-theme', 'light-theme');
+                //chatSearch.classList.replace('dark-theme', 'light-theme');
                 inputContainer.classList.replace('dark-theme', 'light-theme');
                 chatArea.classList.replace('dark-theme', 'light-theme');
                 toggleButton.classList.replace('btn-outline-light', 'btn-outline-dark');
                 toggleButton.textContent = '🌞';
                 searchInput.classList.remove('bg-dark', 'text-white');
                 searchIcon.classList.remove('bg-dark', 'text-white');
-                chatSearchInput.classList.remove('bg-dark', 'text-white');
-                chatSearchIcon.classList.remove('bg-dark', 'text-white');
+                // chatSearchInput.classList.remove('bg-dark', 'text-white');
+                // chatSearchIcon.classList.remove('bg-dark', 'text-white');
                 dropdownButtons.forEach(btn => btn.classList.replace('btn-dark', 'btn-light'));
                 dropdownMenus.forEach(menu => {
                     menu.classList.replace('dropdown-menu-dark', 'dropdown-menu-light');
@@ -1032,15 +1043,15 @@
                 body.setAttribute('data-theme', 'dark');
                 sidebar.classList.replace('light-theme', 'dark-theme');
                 chatItems.forEach(item => item.classList.replace('light-theme', 'dark-theme'));
-                chatSearch.classList.replace('light-theme', 'dark-theme');
+                //chatSearch.classList.replace('light-theme', 'dark-theme');
                 inputContainer.classList.replace('light-theme', 'dark-theme');
                 chatArea.classList.replace('light-theme', 'dark-theme');
                 toggleButton.classList.replace('btn-outline-dark', 'btn-outline-light');
                 toggleButton.textContent = '🌙';
                 searchInput.classList.add('bg-dark', 'text-white');
                 searchIcon.classList.add('bg-dark', 'text-white');
-                chatSearchInput.classList.add('bg-dark', 'text-white');
-                chatSearchIcon.classList.add('bg-dark', 'text-white');
+                // chatSearchInput.classList.add('bg-dark', 'text-white');
+                // chatSearchIcon.classList.add('bg-dark', 'text-white');
                 dropdownButtons.forEach(btn => btn.classList.replace('btn-light', 'btn-dark'));
                 dropdownMenus.forEach(menu => {
                     menu.classList.replace('dropdown-menu-light', 'dropdown-menu-dark');
@@ -1073,14 +1084,33 @@
             chatTitle.contentEditable = true;
             chatTitle.classList.add('editing');
             chatTitle.focus();
+            chatTitle.scrollLeft = 0;
+        });
+
+        chatTitle.addEventListener('focus', () => {
+            chatTitle.scrollLeft = 0; // Ensure start of text is visible when focused
+        });
+
+        chatTitle.addEventListener('input', () => {
+            chatTitle.scrollLeft = 0; // Keep start of text visible during typing
+        });
+
+        chatTitle.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                chatTitle.blur(); // Trigger blur to save the title
+            }
         });
 
         chatTitle.addEventListener('blur', () => {
-            const text = chatTitle.textContent.trim();
-            if (text === '' || /^\s+$/.test(text)) chatTitle.textContent = 'New Chat';
+            let text = chatTitle.textContent.trim();
+            text = text.replace(/\s+/g, ' ');
+            if (text === '' || /^\s+$/.test(text)) text = 'New Chat';
+            chatTitle.textContent = text;
             chatTitle.contentEditable = false;
             chatTitle.classList.remove('editing');
             chatTitle.style.border = '1px solid transparent';
+            chatTitle.scrollLeft = 0;
         });
 
         // Upload icon click triggers file input
@@ -1098,6 +1128,7 @@
             const file = this.files[0];
             if (file) {
                 uploadFile(file);
+                this.value = ''; 
             }
         });
 
@@ -1119,7 +1150,7 @@
                         chatArea.querySelector('.greeting').remove();
                         titleContainer.style.display = 'block';
                         topIcons.style.display = 'flex';
-                        chatSearch.style.display = 'block';
+                        //chatSearch.style.display = 'block';
                         chatTitle.textContent = 'New Chat';
                     }
                     // Enable send icon and update placeholder
@@ -1155,11 +1186,11 @@
                     // chatArea.appendChild(assistantMessageWrapper);
 
                 } else {
-                    alert('Failed to upload document: ' + data.error);
+                    alert('Failed to upload document: ' + data.error);                
                 }
             })
             .catch(error => {
-                console.error('Error uploading file:', error);
+                console.error('Error uploading file:', error.message);
                 alert('Error uploading document. Please try again.');
             });
         }
@@ -1222,7 +1253,10 @@
                     body: JSON.stringify({ message })
                 });
 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Unknown server error');
+                }
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
@@ -1260,7 +1294,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 responseArea.querySelector('.loading').style.display = 'none';
-                responseArea.querySelector('.response-content').innerHTML = '<p>Server is busy. Please try again later.</p>';
+                responseArea.querySelector('.response-content').innerHTML = `<p>${error.message || 'Server is busy. Please try again later.'}</p>`;
                 const endTime = Date.now();
                 const processTime = ((endTime - startTime) / 1000).toFixed(2);
                 responseArea.querySelector('.time-used').textContent = `Processed in ${processTime} seconds`;
@@ -1282,7 +1316,7 @@
             chatArea.innerHTML = '<div class="greeting"><h2>Hi, I\'m TextInsight</h2><p>Upload a document so I can help you.</p></div>';
             titleContainer.style.display = 'none';
             topIcons.style.display = 'none';
-            chatSearch.style.display = 'none';
+            //chatSearch.style.display = 'none';
             chatStarted = false;
             documentUploaded = false; // Reset document upload status
             document.getElementById('send-icon').style.pointerEvents = 'none';

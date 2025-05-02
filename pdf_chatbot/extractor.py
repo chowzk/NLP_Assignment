@@ -126,8 +126,9 @@ class pdf_Extractor:
         """Process a file, check for duplicates, and return a tokenized DataFrame."""
         # Check for duplicate file name
         file_name = os.path.basename(file_path)
-        if file_name in cls.uploaded_files:
-            return False, "File already uploaded", None
+        # commented this since detecting by content not file name
+        # if file_name in cls.uploaded_files:
+        #     return False, "File already uploaded", None
         raw_text = pdf_Extractor.read_file(file_path)
         if raw_text is None:
             return False, "Failed to read file (unsupported extension)", None
@@ -155,7 +156,6 @@ class pdf_Extractor:
         if not query:
             return False, "Please input something"
 
-        
         texts = pdf_Extractor.uploaded_texts
         if not texts:
             return False, "No documents have been uploaded"
