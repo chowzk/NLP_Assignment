@@ -10,6 +10,13 @@ class preprocess:
     stop_words = set(stopwords.words('english'))
     @staticmethod
     def clean_text(text):
+        text = preprocess.clear_noise(text)
+        tokens = preprocess.tokenize_tokens(text)
+        tokens=  preprocess.lemmatizing_tokens(tokens)
+        return tokens
+        
+
+    def clear_noise(text):
         text = text.lower()
         text = re.sub(r'[^\w\s]', ' ', text)
 
@@ -20,6 +27,8 @@ class preprocess:
         text = re.sub(r'\s+', ' ', text).strip()
 
         return text
+        
+        
     @staticmethod
     def tokenize_tokens(text):
         tokens = preprocess.tokenizer.tokenize(text)  
