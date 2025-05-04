@@ -34,9 +34,9 @@ logger = logging.getLogger(__name__)
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), default='New Chat')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    messages = db.relationship('Message', backref='chat', lazy=True)
-    documents = db.relationship('Document', backref='chat', lazy=True)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    messages = db.relationship('Message', backref='chat', cascade="all, delete-orphan")
+    documents = db.relationship('Document', backref='chat', lazy=True, cascade="all, delete-orphan")
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -163,6 +163,17 @@ def update_chat_name(chat_id):
 #         return render_template('form.html', message=f'Hello, {name}!')
 #     return render_template('form.html', message='Please enter your name.')
 
+# Delete a chat
+@app.route('/chats/<int:chat_id>', methods=['DELETE'])
+def delete_chat(chat_id):
+    chat = Chat.query.get(chat_id)
+    if chat is None:
+        return jsonify({'error': 'Chat not found'}), 404
+    db.session.delete(chat)
+    db.session.commit()
+    logger.info(f"Deleted chat with id: {chat_id}")
+    return '', 204
+
 @app.route('/ask', methods=['POST'])
 def ask():
     data = request.json
@@ -182,6 +193,11 @@ def ask():
     if not chat:
         return jsonify({'error': 'Chat not found'}), 404
     
+    # Check if the query is relevant
+    success, message = pdf_Extractor.is_query_relevant(user_input)
+    if not success:
+        return jsonify({'error': message}), 400
+
     messages = Message.query.filter_by(chat_id=chat_id_int).order_by(Message.timestamp.asc()).all()
     conversation_history = [{"role": "system", "content": "You are a helpful assistant."}] + \
                           [{"role": msg.role, "content": msg.content} for msg in messages]
