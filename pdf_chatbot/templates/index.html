@@ -789,13 +789,13 @@
                         <!-- <img src="../static/images/document_dark.png" alt="Documents" title="View Documents" class="dark-icon">
                         <img src="../static/images/document_light.png" alt="Documents" title="View Documents" class="light-icon"> -->
                         <div class="dropdown">
-                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" >
                                 <img src="../static/images/more_dark.png" alt="More" title="More Options" class="dark-icon">
                                 <img src="../static/images/more_light.png" alt="More" title="More Options" class="light-icon">
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="#">Download</a></li>
-                                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                            <ul class="dropdown-menu dropdown-menu-dark">                                
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="exportChat(currentChatId)">Download</a></li>
+                                <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="deleteChat(currentChatId)">Delete</a></li>
                             </ul>
                         </div>
                     </div>
@@ -966,50 +966,106 @@
             return labels[date] || date;
         }
 
+        // Search chat functionality
+        const chatSearchInput = document.getElementById('chat-search');
+        chatSearchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(query));
+            renderChatList(filteredChats);
+        });
+
         // Fetch and display chats
         function fetchChats() {
             fetch('/chats')
                 .then(response => response.json())
                 .then(data => {
                     chats = data;
-                    chatList.innerHTML = '';
-                    const groupedChats = groupChatsByDate(data);
-                    Object.keys(groupedChats).sort((a, b) => {
-                        const order = ['Today', 'Yesterday', 'Previous 7 Days', 'Previous 30 Days', 'Months', 'Year'];
-                        return order.indexOf(a) - order.indexOf(b);
-                    }).forEach(date => {
-                        if (groupedChats[date].length === 0) return;
-                        const h6 = document.createElement('h6');
-                        h6.textContent = dateLabel(date);
-                        chatList.appendChild(h6);
-                        const ul = document.createElement('ul');
-                        ul.className = 'list-group mb-3';
-                        groupedChats[date].forEach(chat => {
-                            const li = document.createElement('li');
-                            li.className = 'list-group-item dark-theme d-flex justify-content-between align-items-center';
-                            li.dataset.chatId = chat.id;
-                            li.innerHTML = `
-                                <span class="chat-name">${chat.name}</span>
-                                <div class="dropdown">
-                                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        ⋮
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-dark">
-                                        <li><a class="dropdown-item" href="#" onclick="exportChat('${chat.id}')">Download</a></li>
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteChat('${chat.id}')">Delete</a></li>
-                                    </ul>
-                                </div>
-                            `;
-                            li.addEventListener('click', (e) => {
-                                if (!e.target.closest('.dropdown')) selectChat(chat.id);
-                            });
-                            ul.appendChild(li);
-                        });
-                        chatList.appendChild(ul);
-                    });
+                    renderChatList(chats);
                 });
         }
         fetchChats()
+
+        function renderChatList(chatsToRender) {
+            chatList.innerHTML = '';
+            const groupedChats = groupChatsByDate(chatsToRender);
+            Object.keys(groupedChats).sort((a, b) => {
+                const order = ['Today', 'Yesterday', 'Previous 7 Days', 'Previous 30 Days', 'Months', 'Year'];
+                return order.indexOf(a) - order.indexOf(b);
+            }).forEach(date => {
+                if (groupedChats[date].length === 0) return;
+                const h6 = document.createElement('h6');
+                h6.textContent = dateLabel(date);
+                chatList.appendChild(h6);
+                const ul = document.createElement('ul');
+                ul.className = 'list-group mb-3';
+                groupedChats[date].forEach(chat => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item dark-theme d-flex justify-content-between align-items-center';
+                    li.dataset.chatId = chat.id;
+                    li.innerHTML = `
+                        <span class="chat-name">${chat.name}</span>
+                        <div class="dropdown">
+                            <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                ⋮
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="#" onclick="exportChat('${chat.id}')">Download</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteChat('${chat.id}')">Delete</a></li>
+                            </ul>
+                        </div>
+                    `;
+                    li.addEventListener('click', (e) => {
+                        if (!e.target.closest('.dropdown')) selectChat(chat.id);
+                    });
+                    ul.appendChild(li);
+                });
+                chatList.appendChild(ul);
+            });
+        }
+
+        // function fetchChats() {
+        //     fetch('/chats')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             chats = data;
+        //             chatList.innerHTML = '';
+        //             const groupedChats = groupChatsByDate(data);
+        //             Object.keys(groupedChats).sort((a, b) => {
+        //                 const order = ['Today', 'Yesterday', 'Previous 7 Days', 'Previous 30 Days', 'Months', 'Year'];
+        //                 return order.indexOf(a) - order.indexOf(b);
+        //             }).forEach(date => {
+        //                 if (groupedChats[date].length === 0) return;
+        //                 const h6 = document.createElement('h6');
+        //                 h6.textContent = dateLabel(date);
+        //                 chatList.appendChild(h6);
+        //                 const ul = document.createElement('ul');
+        //                 ul.className = 'list-group mb-3';
+        //                 groupedChats[date].forEach(chat => {
+        //                     const li = document.createElement('li');
+        //                     li.className = 'list-group-item dark-theme d-flex justify-content-between align-items-center';
+        //                     li.dataset.chatId = chat.id;
+        //                     li.innerHTML = `
+        //                         <span class="chat-name">${chat.name}</span>
+        //                         <div class="dropdown">
+        //                             <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        //                                 ⋮
+        //                             </button>
+        //                             <ul class="dropdown-menu dropdown-menu-dark">
+        //                                 <li><a class="dropdown-item" href="#" onclick="exportChat('${chat.id}')">Download</a></li>
+        //                                 <li><a class="dropdown-item text-danger" href="#" onclick="deleteChat('${chat.id}')">Delete</a></li>
+        //                             </ul>
+        //                         </div>
+        //                     `;
+        //                     li.addEventListener('click', (e) => {
+        //                         if (!e.target.closest('.dropdown')) selectChat(chat.id);
+        //                     });
+        //                     ul.appendChild(li);
+        //                 });
+        //                 chatList.appendChild(ul);
+        //             });
+        //         });
+        // }
+        // fetchChats()
 
         //             Object.keys(groupedChats).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
         //                 const h6 = document.createElement('h6');
@@ -1659,35 +1715,40 @@
             alert('Response copied!');
         }
 
-        function deleteChat() {
-            if (!chatId || chatId.startsWith('temp_')) return;
-            // if (!currentChatId) return;
+        function deleteChat(chatId) {
+            if (!chatId || String(chatId).startsWith('temp_')) return;
             if (confirm('Are you sure you want to delete this chat?')) {
-                fetch(`/chats/${currentChatId}`, { method: 'DELETE' })
+                fetch(`/chats/${chatId}`, { method: 'DELETE' })
                     .then(response => {
                         if (response.ok) {
-                            chats = chats.filter(chat => chat.id !== currentChatId);
+                            chats = chats.filter(chat => chat.id !== chatId);
                             fetchChats();
-                            chatArea.innerHTML = '<div class="greeting"><h2>Hi, I\'m TextInsight</h2><p>Upload a document so I can help you.</p></div>';
-                            titleContainer.style.display = 'none';
-                            topIcons.style.display = 'none';
-                            chatStarted = false;
-                            documentUploaded = false;
-                            currentChatId = null;
-                            document.getElementById('send-icon').style.pointerEvents = 'none';
-                            document.getElementById('send-icon').style.opacitycakes = '0.5';
-                            messageInput.placeholder = 'Upload a document to start chatting';
-                            messageInput.disabled = true;
-                            autoResizeTextarea();
+                            if (currentChatId === chatId) {
+                                chatArea.innerHTML = '<div class="greeting"><h2>Hi, I\'m TextInsight</h2><p>Upload a document so I can help you.</p></div>';
+                                titleContainer.style.display = 'none';
+                                topIcons.style.display = 'none';
+                                chatStarted = false;
+                                documentUploaded = false;
+                                currentChatId = null;
+                                messageInput.placeholder = 'Upload a document to start chatting';
+                                messageInput.disabled = true;
+                            }
+                            fetchChats();
+                        } else {
+                            console.error('Failed to delete chat:', response.statusText);
+                            alert('Failed to delete chat');
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting chat:', error);
+                        alert('Error deleting chat');
                     });
             }
         }
 
-        function exportChat() {
-            if (!chatId || chatId.startsWith('temp_')) return;
-            // if (!currentChatId) return;
-            fetch(`/chats/${currentChatId}`)
+        function exportChat(chatId) {
+            if (!chatId || String(chatId).startsWith('temp_')) return;
+            fetch(`/chats/${chatId}`)
                 .then(response => response.json())
                 .then(messages => {
                     const chatContent = messages.map(msg => {
@@ -1697,11 +1758,28 @@
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `chat_${currentChatId}.txt`;
+                    a.download = `chat_${chatId}.txt`;
                     a.click();
                     URL.revokeObjectURL(url);
                 });
         }
+        // function exportChat(chatId) {
+        //     if (!chatId || chatId.startsWith('temp_')) return;
+        //     fetch(`/chats/${chatId}`)
+        //         .then(response => response.json())
+        //         .then(messages => {
+        //             const chatContent = messages.map(msg => {
+        //                 return `${msg.role === 'user' ? 'You' : 'TextInsight'}: ${msg.content}`;
+        //             }).join('\n');
+        //             const blob = new Blob([chatContent], { type: 'text/plain' });
+        //             const url = URL.createObjectURL(blob);
+        //             const a = document.createElement('a');
+        //             a.href = url;
+        //             a.download = `chat_${chatId}.txt`;
+        //             a.click();
+        //             URL.revokeObjectURL(url);
+        //         });
+        // }
 
         // TTS: Play audio from server
         function playAudio(text, playIcon, stopIcon) {
