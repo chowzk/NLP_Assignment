@@ -94,13 +94,14 @@ class pdf_Extractor:
         """Process a file, check for duplicates, and save to the database if unique."""
         from app import Document as SQLDocument  # Lazy import
         try:
+            filename = os.path.basename(file_path)
             raw_text = pdf_Extractor.read_file(file_path)
             if raw_text is None:
                 return False, "Failed to read file (unsupported extension or file error)", None
             cleaned_text = preprocess.clean_text(raw_text)
             if pdf_Extractor.is_duplicate(db, cleaned_text):
                 return False, "Document is too similar to an existing one", None
-            new_doc = SQLDocument(chat_id=chat_id, cleaned_text=cleaned_text)
+            new_doc = SQLDocument(chat_id=chat_id, filename=filename, cleaned_text=cleaned_text)
             db.session.add(new_doc)
             db.session.commit()
             logger.info(f"Document processed and saved for chat_id: {chat_id}")

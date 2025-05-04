@@ -1,205 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TextInsight Chat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="../static/styles.css">
-    <script src="../static/chatbot.js"></script>
-</head>
-<body data-theme="dark">
-    <div class="container-fluid">
-        <div class="row">
-            <div id="sidebar" class="p-3 dark-theme">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <img src="../static/images/logo_dark.png" alt="Dark Logo" class="logo-img logo-dark">
-                        <img src="../static/images/logo_light.png" alt="Light Logo" class="logo-img logo-light">
-                    </div>
-                    <div>
-                        <button id="toggle-theme" class="btn btn-outline-light btn-sm">🌙</button>
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text rounded-start">🔍</span>
-                    <input type="text" class="form-control rounded-end bg-dark text-white" placeholder="Search chats...">
-                </div>
-                <button class="btn btn-primary w-100 mb-3">+ Create new chat</button>
-                <div class="chat-list">
-                    <h6>Today</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Sample Chat Today</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Yesterday</h6>
-                    <ul class="list-group mb-3">
-                    </ul>
-                    <h6>Previous 7 Days</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Dyna-Q Agent Exploration Strategies and Algorithms</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Dyna-Q Hyperparameters Tuning for Optimal Performance</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Neural Network Churn Prediction</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Previous 30 Days</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">SortedDoublyLinkedList Overview and Implementation</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Application Process Flow</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Months</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Old Chat from June</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Year</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Chat from 2023</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div id="main-content">
-                <div class="chat-header">
-                    <span class="chat-title" contenteditable="false">New Chat</span>
-                    <div class="top-icons">
-                        <img src="../static/images/document_dark.png" alt="Documents" title="View Documents">
-                        <div class="dropdown">
-                            <img src="../static/images/more_dark.png" alt="More" title="More Options">
-                            <div class="dropdown-content">
-                                <a href="#" onclick="deleteChat()">Delete Chat</a>
-                                <a href="#" onclick="exportChat()">Export Chat</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-area" id="chat-area">
-                    <div class="greeting">
-                        <h2>Hi, I'm TextInsight</h2>
-                        <p>Upload a document so I can help you.</p>
-                    </div>
-                    <div class="loading" id="loading">Generating response...</div>
-                </div>
-                <div class="input-area" id="input-area">
-                    <img src="../static/images/upload_dark.png" alt="Upload" title="Upload Document">
-                    <textarea id="message-input" placeholder="Message TextInsight"></textarea>
-                    <img src="../static/images/send_dark.png" alt="Send" title="Send" onclick="sendMessage()">
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -227,6 +25,7 @@
             --input-border: #555;
             --icon-bg: #555;
             --icon-hover-bg: #666;
+            --button-hover: #4a4a4a;
         }
         [data-theme="light"] {
             --bg-color: #f4f4f4;
@@ -783,6 +582,66 @@
             padding: 10px 0;
         }
 
+        .modal-content-table {
+            background-color: var(--chat-bg);
+            padding: 20px;
+            border-radius: 5px;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #documents-table td:first-child { /* Style for the filename column */
+            max-width: 200px; /* Fixed maximum width for filename column */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        #documents-modal .modal-content-table {
+            width: 80%;
+            max-width: 1000px;
+        }
+
+        #documents-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #documents-table th, #documents-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+        
+        #documents-table th {
+            background-color: var(--input-bg);
+        }
+
+        #documents-table button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #documents-table button:hover {
+            background-color: var(--button-hover);
+        }
+
+        #document-search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+        }
+
         .input-container {
             display: flex;
             align-items: center;
@@ -880,7 +739,7 @@
                     <div class="doc-icon" id="doc-icon">
                         <img src="../static/images/document_dark.png" alt="Documents" title="View Documents" class="dark-icon">
                         <img src="../static/images/document_light.png" alt="Documents" title="View Documents" class="light-icon">
-                    </div>    
+                    </div>                    
                     <div>
                         <button id="toggle-theme" class="btn btn-outline-light btn-sm">🌙</button>
                     </div>
@@ -929,6 +788,28 @@
                         <p>Upload a document so I can help you.</p>
                     </div>
                 </div>
+                <!-- Documents Modal -->
+                <div id="documents-modal" class="modal" style="display: none;">
+                    <div class="modal-content-table">
+                        <span class="close-button">&times;</span>
+                        <h3 style="font-weight: bold; margin-bottom: 10px;">Uploaded Documents</h3>
+                        <input type="text" id="document-search" placeholder="Search documents...">
+                        <table id="documents-table">
+                            <thead>
+                                <tr>
+                                    <th>Filename</th>
+                                    <th>Uploaded On</th>
+                                    <th>Type</th>
+                                    <th>Chat</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Documents will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
                 <div id="document-modal" class="modal" style="display: none;">
                     <div class="modal-content">
                         <span class="close-button">&times;</span>
@@ -1198,6 +1079,78 @@
         function dateLabel(key) {
             return key;
         }
+
+        document.getElementById('doc-icon').addEventListener('click', function() {
+            fetchDocuments();
+            document.getElementById('documents-modal').style.display = 'flex';
+        });
+
+        function fetchDocuments() {
+            fetch('/documents')
+                .then(response => response.json())
+                .then(documents => {
+                    const tableBody = document.querySelector('#documents-table tbody');
+                    tableBody.innerHTML = '';
+                    documents.forEach(doc => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${doc.filename}</td>
+                            <td>${new Date(doc.upload_date).toLocaleString()}</td>
+                            <td>${doc.type}</td>
+                            <td>${doc.chat_name}</td>
+                            <td>
+                                <button onclick="viewDocument(${doc.chat_id}, '${doc.filename}')">View</button>
+                                <button onclick="deleteDocument(${doc.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching documents:', error));
+        }
+
+        function viewDocument(chatId, filename) {
+            fetch(`/chats/${chatId}/documents/${filename}/text`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Document not found or deleted');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    showDocumentModal(filename, text)
+                    // document.getElementById('document-text-title').textContent = `Full Text of ${filename}`;
+                    // document.getElementById('document-text-content').textContent = text;
+                    // document.getElementById('document-text-modal').style.display = 'flex';
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+
+        function deleteDocument(documentId) {
+            if (confirm('Are you sure you want to delete this document?')) {
+                fetch(`/documents/${documentId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            fetchDocuments(); // Refresh the list
+                        } else {
+                            alert('Failed to delete document');
+                        }
+                    })
+                    .catch(error => console.error('Error deleting document:', error));
+            }
+        }
+
+        document.getElementById('document-search').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#documents-table tbody tr');
+            rows.forEach(row => {
+                const filename = row.querySelector('td:first-child').textContent.toLowerCase();
+                row.style.display = filename.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
 
         // Select a chat
         function selectChat(chatId) {
@@ -1489,10 +1442,28 @@
                             // Display user and assistant messages
                             const userMessageWrapper = document.createElement('div');
                             userMessageWrapper.className = 'message-wrapper';
-                            const userBubble = document.createElement('div');
-                            userBubble.className = 'chat-bubble user';
-                            userBubble.textContent = `I have uploaded a document named '${file.name}'`;
-                            userMessageWrapper.appendChild(userBubble);
+                            // const userBubble = document.createElement('div');
+                            // userBubble.className = 'chat-bubble user';
+                            // userBubble.textContent = `I have uploaded a document named '${file.name}'`;
+                            
+                            const uploadElement = document.createElement('div');
+                            uploadElement.className = 'document-upload';
+                            uploadElement.innerHTML = `
+                                <img src="../static/images/yellow_doc_icon.png" alt="Document Icon">
+                                <span class="filename">${file.name}</span>
+                            `;
+                            uploadElement.addEventListener('click', () => {
+                                fetch(`/chats/${currentChatId}/documents/${file.name}/text`)
+                                    .then(response => response.text())
+                                    .then(content => {
+                                        showDocumentModal(file.name, content);
+                                    })
+                                    .catch(error => {
+                                        alert('Error fetching document content: ' + error.message);
+                                    });
+                            });
+                            //userMessageWrapper.appendChild(userBubble);
+                            userMessageWrapper.appendChild(uploadElement);
                             chatArea.appendChild(userMessageWrapper);
                             const assistantMessageWrapper = document.createElement('div');
                             assistantMessageWrapper.className = 'message-wrapper';
@@ -1742,14 +1713,13 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('document-modal');
-            const closeButton = document.querySelector('.close-button');
-
-            closeButton.addEventListener('click', () => {
-                modal.style.display = 'none';
+        document.querySelectorAll('.close-button').forEach(button => {
+            button.addEventListener('click', () => {
+                button.closest('.modal').style.display = 'none';
             });
+        });
 
+        document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     modal.style.display = 'none';

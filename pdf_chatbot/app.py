@@ -42,8 +42,9 @@ class Message(db.Model):
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'), nullable=False)
+    filename = db.Column(db.String(200), nullable=False)
     cleaned_text = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
 # Initialize database and reset extractor state
 with app.app_context():
@@ -355,7 +356,38 @@ def upload_file():
         os.remove(temp_path) if os.path.exists(temp_path) else None
         return jsonify({'success': False, 'error': f"Server error: {str(e)}"}), 500
     
-    
+@app.route('/documents', methods=['GET'])
+def get_documents():
+    documents = Document.query.all()
+    doc_data = []
+    for doc in documents:
+        chat = Chat.query.get(doc.chat_id)
+        doc_data.append({
+            'id': doc.id,
+            'filename': doc.filename,
+            'upload_date': doc.created_at.isoformat(),
+            'type': os.path.splitext(doc.filename)[1][1:].upper(),
+            'chat_id': doc.chat_id,
+            'chat_name': chat.name
+        })
+    return jsonify(doc_data)
+
+@app.route('/chats/<int:chat_id>/documents/<string:filename>/text', methods=['GET'])
+def get_document_text(chat_id, filename):
+    messages = Message.query.filter_by(chat_id=chat_id, role='user').all()
+    for msg in messages:
+        match = re.match(r"I have uploaded a document named '" + re.escape(filename) + r"' with the following content: ([\s\S]*)", msg.content)
+        if match:
+            return match.group(1)
+    return "Document not found", 404
+
+@app.route('/documents/<int:document_id>', methods=['DELETE'])
+def delete_document(document_id):
+    doc = Document.query.get_or_404(document_id)
+    db.session.delete(doc)
+    db.session.commit()
+    return '', 204
+
 if __name__ == '__main__':
     app.run(debug=True)
 
