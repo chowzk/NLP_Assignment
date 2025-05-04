@@ -4,13 +4,16 @@ import os
 from gtts import gTTS
 import re
 import pydub as AudioSegment
+import time
+
 class TTS:
     @staticmethod
     def text_to_speech(text):
         """Convert text to speech and save as MP3 in static directory."""
         try:
             tts = gTTS(text=text, lang='en')
-            audio_file = "static/temp_audio.mp3"
+            timestamp = int(time.time() * 1000)
+            audio_file = f"static/temp_audio_{timestamp}.mp3"
             tts.save(audio_file)
             return audio_file
         except Exception as e:

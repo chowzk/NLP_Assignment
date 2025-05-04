@@ -81,11 +81,11 @@
         }
 
         .response-actions { 
-            display: flex; 
-            gap: 5px; 
-            margin-top: 5px; 
-            justify-content: flex-start; /* Align buttons to the start */
-            margin-left: 0; /* Ensure no left margin offset */
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            justify-content: flex-start;
+            align-self: flex-start;
         }
         
         #mic-icon.recording img { 
@@ -456,6 +456,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        .play-icon.disabled {
+            pointer-events: none;
+            opacity: 0.5;
         }
 
         .document-upload {
@@ -867,6 +872,8 @@
         let audioElement = null;
         let mediaRecorder = null;
         let audioChunks = [];
+        let currentPlayingResponse = null;
+
         const chatArea = document.getElementById('chat-area');
         const inputArea = document.getElementById('input-area');
         const messageInput = document.getElementById('message-input');
@@ -1336,8 +1343,9 @@
                                     const playIcon = response.querySelector('.play-icon');
                                     const stopIcon = response.querySelector('.stop-icon');
                                     const contentDiv = response.querySelector('.response-content');
-                                    playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon));
-                                    stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon));
+                                    // Attach audio element to the response element for unique playback
+                                    playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon, response));
+                                    stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon, response));
                                 } catch (error) {
                                     console.error('Error rendering message:', error);
                                     response.innerHTML = `<p>Error rendering message: ${error.message}</p>`;
@@ -1575,8 +1583,21 @@
                             const html = DOMPurify.sanitize(marked.parse(data.message));
                             responseArea.innerHTML = `
                                 <div class="response-content">${html}</div>
+                                <div class="response-actions">
+                                    <img src="../static/images/play_dark.png" alt="Play" title="Play" class="play-icon dark-icon">
+                                    <img src="../static/images/play_light.png" alt="Play" title="Play" class="play-icon light-icon">
+                                    <img src="../static/images/stop_dark.png" alt="Stop" title="Stop" class="stop-icon dark-icon" style="display:   none;">
+                                    <img src="../static/images/stop_light.png" alt="Stop" title="Stop" class="stop-icon light-icon" style="display:     none;">
+                                </div>
                                 <div class="time-used"></div>
                             `;
+                            responseArea.audioElement = null; // Initialize audioElement for this response
+                            const playIcon = responseArea.querySelector('.play-icon');
+                            const stopIcon = responseArea.querySelector('.stop-icon');
+                            const contentDiv = responseArea.querySelector('.response-content');
+                            playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon, responseArea));
+                            stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon, responseArea));
+
                             assistantMessageWrapper.appendChild(responseArea);
                             chatArea.appendChild(assistantMessageWrapper);
                             chatArea.scrollTop = chatArea.scrollHeight;
@@ -1626,11 +1647,11 @@
             responseArea.innerHTML = `
                 <div class="loading">Generating response...</div>
                 <div class="response-content"></div>
-                <div class="response-actions">
+                <div class="response-actions" style="display: none;">
                     <img src="../static/images/play_dark.png" alt="Play" title="Play" class="play-icon dark-icon">
                     <img src="../static/images/play_light.png" alt="Play" title="Play" class="play-icon light-icon">
-                    <img src="../static/images/stop_dark.png" alt="Stop" title="Stop" class="stop-icon dark-style="display: none;">
-                    <img src="../static/images/stop_light.png" alt="Stop" title="Stop" class="stop-icon light-style="display: none;">
+                    <img src="../static/images/stop_dark.png" alt="Stop" title="Stop" class="stop-icon dark-icon" style="display: none;">
+                    <img src="../static/images/stop_light.png" alt="Stop" title="Stop" class="stop-icon light-icon" style="display: none;">
                 </div>
                 <div class="time-used"></div>
             `;
@@ -1640,9 +1661,9 @@
             const playIcon = responseArea.querySelector('.play-icon');
             const stopIcon = responseArea.querySelector('.stop-icon');
             const contentDiv = responseArea.querySelector('.response-content');
-            playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon));
-            stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon));
-
+            // Attach audio element to the response element for unique playback
+            playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon, response));
+            stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon, response));
             const startTime = Date.now();
             try {
                 isGenerating = true;
@@ -1668,6 +1689,7 @@
                 async function read() {
                     const { done, value } = await reader.read();
                     if (done) {
+                        responseArea.querySelector('.response-actions').style.display = 'flex';
                         const spinner = responseArea.querySelector('.loading');
                         if (spinner) spinner.style.display = 'none';
                         if (result.trim() === '') {
@@ -1782,11 +1804,26 @@
         // }
 
         // TTS: Play audio from server
-        function playAudio(text, playIcon, stopIcon) {
-            if (audioElement && !audioElement.paused) {
-                audioElement.pause();
+        function playAudio(text, playIcon, stopIcon, responseElement) {
+            if (responseElement.audioElement && !responseElement.audioElement.paused) {
+                responseElement.audioElement.pause();
+                playIcon.style.display = 'inline';
+                stopIcon.style.display = 'none';
+                if (currentPlayingResponse === responseElement) {
+                    currentPlayingResponse = null;
+                }
+                document.querySelectorAll('.play-icon').forEach(icon => {
+                    icon.classList.remove('disabled');
+                });
                 return;
             }
+
+            if (currentPlayingResponse && currentPlayingResponse !== responseElement) {
+                const otherPlayIcon = currentPlayingResponse.querySelector('.play-icon');
+                const otherStopIcon = currentPlayingResponse.querySelector('.stop-icon');
+                stopAudio(otherPlayIcon, otherStopIcon, currentPlayingResponse);
+            }
+
             fetch('/tts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1795,13 +1832,25 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) throw new Error(data.error);
-                audioElement = new Audio(data.audio_url);
-                audioElement.play();
+                responseElement.audioElement = new Audio(data.audio_url);
+                responseElement.audioElement.play();
                 playIcon.style.display = 'none';
                 stopIcon.style.display = 'inline';
-                audioElement.onended = () => {
+                currentPlayingResponse = responseElement;
+
+                document.querySelectorAll('.play-icon').forEach(icon => {
+                    if (icon !== playIcon) {
+                        icon.classList.add('disabled');
+                    }
+                });
+
+                responseElement.audioElement.onended = () => {
                     playIcon.style.display = 'inline';
                     stopIcon.style.display = 'none';
+                    currentPlayingResponse = null;
+                    document.querySelectorAll('.play-icon').forEach(icon => {
+                        icon.classList.remove('disabled');
+                    });
                 };
             })
             .catch(error => {
@@ -1811,12 +1860,16 @@
         }
 
         // TTS: Stop audio
-        function stopAudio(playIcon, stopIcon) {
-            if (audioElement) {
-                audioElement.pause();
-                audioElement.currentTime = 0;
+        function stopAudio(playIcon, stopIcon, responseElement) {
+            if (responseElement.audioElement && !responseElement.audioElement.paused) {
+                responseElement.audioElement.pause();
+                responseElement.audioElement.currentTime = 0;
                 playIcon.style.display = 'inline';
                 stopIcon.style.display = 'none';
+                currentPlayingResponse = null;
+                document.querySelectorAll('.play-icon').forEach(icon => {
+                    icon.classList.remove('disabled');
+                });
             }
         }
 
