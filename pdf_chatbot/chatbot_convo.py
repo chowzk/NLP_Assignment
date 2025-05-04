@@ -1,5 +1,7 @@
 from openai import OpenAI
 from flask import Response
+from datetime import datetime, timezone
+from flask_sqlalchemy import SQLAlchemy
 
 # Initialise OpenAI client
 client = OpenAI(
@@ -13,7 +15,7 @@ conversation_history = [
     {"role": "system", "content": "You are a helpful assistant."}
 ]
 
-def get_chatbot_response(user_input):
+def get_chatbot_response(user_input, conversation_history, full_response, chat_id, db, app):
     conversation_history.append({"role": "user", "content": user_input})
     try:
         stream = client.chat.completions.create(
@@ -28,12 +30,23 @@ def get_chatbot_response(user_input):
                 content = chunk.choices[0].delta.content or ""
                 full_response.append(content)
                 yield content.encode('utf-8')
-
+            # Append assistant response to history after streaming
+            assistant_content = "".join(full_response)
             conversation_history.append({
                 "role": "assistant",
-                "content":  "".join(full_response)
+                "content": assistant_content
             })
-
+            # Save assistant message to database
+            with app.app_context():
+                from app import Message  # Import here to avoid circular import
+                assistant_message = Message(
+                    chat_id=chat_id,
+                    role="assistant",
+                    content=assistant_content,
+                    timestamp=datetime.now(timezone.utc)
+                )
+                db.session.add(assistant_message)
+                db.session.commit()
         return Response(generate(), mimetype='text/plain')
     except Exception as e:
         print(f"Error in get_chatbot_response: {str(e)}")

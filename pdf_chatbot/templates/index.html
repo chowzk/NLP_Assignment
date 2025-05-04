@@ -305,6 +305,10 @@
             background-color: #495057;
         }
 
+        .list-group-item.selected-chat {
+            background-color: #343a40; /* Darker color for selected chat */
+        }
+
         .list-group-item .dropdown {
             visibility: hidden;
         }
@@ -342,6 +346,10 @@
         }
 
         .list-group-item.light-theme:hover {
+            background-color: #e9ecef;
+        }
+
+        .list-group-item.selected-chat.light-theme {
             background-color: #e9ecef;
         }
 
@@ -744,6 +752,11 @@
             height: 18px;
         }
 
+        .input-container .icon-btn.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
         /* Icon visibility for themes */
         .dark-icon {
             display: block;
@@ -780,146 +793,10 @@
                     <span class="input-group-text rounded-start">🔍</span>
                     <input type="text" class="form-control rounded-end bg-dark text-white" placeholder="Search chats...">
                 </div>
-                <button class="btn btn-primary w-100 mb-3">+ Create new chat</button>
+                <button id="create-chat" class="btn btn-primary w-100 mb-3">+ Create new chat</button>
                 <div class="chat-list">
-                    <h6>Today</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Sample Chat Today</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Yesterday</h6>
-                    <ul class="list-group mb-3">
-                        <!-- No chats under Yesterday -->
-                    </ul>
-                    <h6>Previous 7 Days</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Dyna-Q Agent Exploration Strategies and Algorithms</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Dyna-Q Hyperparameters Tuning for Optimal Performance</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Neural Network Churn Prediction</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Previous 30 Days</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">SortedDoublyLinkedList Overview and Implementation</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Application Process Flow</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Months</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Old Chat from June</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    <h6>Year</h6>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item dark-theme d-flex justify-content-between align-items-center">
-                            <span class="chat-name">Chat from 2023</span>
-                            <div class="dropdown">
-                                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                    <li><a class="dropdown-item" href="#">Rename</a></li>
-                                    <li><a class="dropdown-item" href="#">Archive</a></li>
-                                    <li><a class="dropdown-item" href="#">Chat Details</a></li>
-                                    <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                </ul>
-                            </div>
-                        </li>
+                    <ul class="list-group mb-3" id="chat-list">
+                        <!-- Chats will be populated dynamically -->
                     </ul>
                 </div>
             </div>
@@ -979,6 +856,8 @@
         let chatStarted = false;
         let documentUploaded = false; // Track if a document is uploaded
         let isGenerating = false;    // Track if a response is being generated
+        let currentChatId = null;
+        let chats = [];
         const chatArea = document.getElementById('chat-area');
         const inputArea = document.getElementById('input-area');
         const messageInput = document.getElementById('message-input');
@@ -987,6 +866,7 @@
         // const chatSearch = document.getElementById('chat-search');
         const chatTitle = document.querySelector('.chat-title');
         const inputContainer = document.querySelector('.input-container');
+        const chatList = document.getElementById('chat-list');
 
         // Initially disable send icon
         document.getElementById('send-icon').style.pointerEvents = 'none';
@@ -1065,6 +945,266 @@
             }
         });
 
+        function dateLabel(date) {
+            const labels = {
+                'Today': 'Today',
+                'Yesterday': 'Yesterday',
+                'Previous 7 Days': 'Previous 7 Days',
+                'Previous 30 Days': 'Previous 30 Days',
+                'Months': 'This Year',
+                'Year': 'Older'
+            };
+            return labels[date] || date;
+        }
+
+        // Fetch and display chats
+        function fetchChats() {
+            fetch('/chats')
+                .then(response => response.json())
+                .then(data => {
+                    chats = data;
+                    chatList.innerHTML = '';
+                    const groupedChats = groupChatsByDate(data);
+                    Object.keys(groupedChats).sort((a, b) => {
+                        const order = ['Today', 'Yesterday', 'Previous 7 Days', 'Previous 30 Days', 'Months', 'Year'];
+                        return order.indexOf(a) - order.indexOf(b);
+                    }).forEach(date => {
+                        if (groupedChats[date].length === 0) return;
+                        const h6 = document.createElement('h6');
+                        h6.textContent = dateLabel(date);
+                        chatList.appendChild(h6);
+                        const ul = document.createElement('ul');
+                        ul.className = 'list-group mb-3';
+                        groupedChats[date].forEach(chat => {
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item dark-theme d-flex justify-content-between align-items-center';
+                            li.dataset.chatId = chat.id;
+                            li.innerHTML = `
+                                <span class="chat-name">${chat.name}</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ⋮
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><a class="dropdown-item" href="#" onclick="exportChat('${chat.id}')">Download</a></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteChat('${chat.id}')">Delete</a></li>
+                                    </ul>
+                                </div>
+                            `;
+                            li.addEventListener('click', (e) => {
+                                if (!e.target.closest('.dropdown')) selectChat(chat.id);
+                            });
+                            ul.appendChild(li);
+                        });
+                        chatList.appendChild(ul);
+                    });
+                });
+        }
+        fetchChats()
+
+        //             Object.keys(groupedChats).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
+        //                 const h6 = document.createElement('h6');
+        //                 h6.textContent = dateLabel(date);
+        //                 chatList.appendChild(h6);
+        //                 const ul = document.createElement('ul');
+        //                 ul.className = 'list-group mb-3';
+        //                 groupedChats[date].forEach(chat => {
+        //                     const li = document.createElement('li');
+        //                     li.className = 'list-group-item dark-theme d-flex justify-content-between align-items-center';
+        //                     li.dataset.chatId = chat.id;
+        //                     li.innerHTML = `
+        //                         <span class="chat-name">${chat.name}</span>
+        //                         <div class="dropdown">
+        //                             <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        //                                 ⋮
+        //                             </button>
+        //                             <ul class="dropdown-menu dropdown-menu-dark">
+        //                                 <li><a class="dropdown-item" href="#" onclick="exportChat()">Download</a></li>
+        //                                 <li><a class="dropdown-item" href="#">Rename</a></li>
+        //                                 <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+        //                             </ul>
+        //                         </div>
+        //                     `;
+        //                     li.addEventListener('click', (e) => {
+        //                         if (!e.target.closest('.dropdown')) selectChat(chat.id);
+        //                     });
+        //                     ul.appendChild(li);
+        //                 });
+        //                 chatList.appendChild(ul);
+        //             });
+        //         });
+        // }
+        // fetchChats();
+
+        // Group chats by date
+        function groupChatsByDate(chats) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const today = new Date().toLocaleDateString('en-CA', options);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayLocal = yesterday.toLocaleDateString('en-CA', options);
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const sevenDaysAgoLocal = sevenDaysAgo.toLocaleDateString('en-CA', options);
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const thirtyDaysAgoLocal = thirtyDaysAgo.toLocaleDateString('en-CA', options);
+            const currentYear = new Date().getFullYear();
+
+            const grouped = {
+                'Today': [],
+                'Yesterday': [],
+                'Previous 7 Days': [],
+                'Previous 30 Days': [],
+                'Months': [],
+                'Year': []
+            };
+
+            chats.forEach(chat => {
+                const lastModifiedLocal = new Date(chat.last_modified).toLocaleDateString('en-CA', options);
+                const lastModifiedYear = new Date(chat.last_modified).getFullYear();
+                if (lastModifiedLocal === today) {
+                    grouped['Today'].push(chat);
+                } else if (lastModifiedLocal === yesterdayLocal) {
+                    grouped['Yesterday'].push(chat);
+                } else if (lastModifiedLocal > sevenDaysAgoLocal) {
+                    grouped['Previous 7 Days'].push(chat);
+                } else if (lastModifiedLocal > thirtyDaysAgoLocal) {
+                    grouped['Previous 30 Days'].push(chat);
+                } else if (lastModifiedYear === currentYear) {
+                    grouped['Months'].push(chat);
+                } else {
+                    grouped['Year'].push(chat);
+                }
+            });
+
+            // Sort each group by last_modified descending
+            for (let key in grouped) {
+                grouped[key].sort((a, b) => new Date(b.last_modified) - new Date(a.last_modified));
+            }
+
+            return grouped;
+        }
+
+        function isSameDay(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getDate() === date2.getDate();
+        }
+
+        function dateLabel(key) {
+            return key;
+        }
+
+        // Select a chat
+        function selectChat(chatId) {
+            const sendIcon = document.getElementById('send-icon');
+            console.log('Selecting chat:', chatId, 'Type:', typeof chatId);
+            currentChatId = chatId;
+            // Remove selected-chat class from all items
+            document.querySelectorAll('.list-group-item').forEach(item => {
+                item.classList.remove('selected-chat');
+            });
+            // Add selected-chat class to the clicked item
+            const selectedLi = chatList.querySelector(`[data-chat-id="${chatId}"]`);
+            if (selectedLi) {
+                selectedLi.classList.add('selected-chat');
+            }
+
+            chatArea.innerHTML = '';
+            if (String(chatId).startsWith('temp_')) {
+                chatStarted = false;
+                documentUploaded = false;
+                chatArea.innerHTML = `
+                    <div class="greeting">
+                        <h2>Hi, I'm TextInsight</h2>
+                        <p>Upload a document so I can help you.</p>
+                    </div>
+                `;
+                titleContainer.style.display = 'none';
+                topIcons.style.display = 'none';
+                messageInput.placeholder = 'Upload a document to start chatting';
+                messageInput.disabled = true;
+                sendIcon.classList.add('disabled');
+                chatTitle.textContent = chats.find(c => c.id === chatId)?.name || 'New Chat';
+            } else {
+                chatStarted = true;
+                documentUploaded = true;
+                titleContainer.style.display = 'block';
+                topIcons.style.display = 'flex';
+                // chatStarted = true;
+                // documentUploaded = true;
+                // titleContainer.style.display = 'block';
+                // topIcons.style.display = 'flex';
+                messageInput.placeholder = 'Message TextInsight';
+                messageInput.disabled = false;
+                document.getElementById('send-icon').style.pointerEvents = 'auto';
+                document.getElementById('send-icon').style.opacity = '1';
+                fetch(`/chats/${chatId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch messages: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(messages => {
+                        console.log('Messages received:', messages);
+                        console.log('Type of messages:', typeof messages, Array.isArray(messages));
+                        if (!Array.isArray(messages)) {
+                            console.error('Messages is not an array:', messages);
+                            chatArea.innerHTML = '<p>Invalid message format received.</p>';
+                            return;
+                        }
+                        chatArea.innerHTML = '';
+                        messages.forEach(msg => {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'message-wrapper';
+                            if (msg.role === 'user') {
+                                const bubble = document.createElement('div');
+                                bubble.className = 'chat-bubble user';
+                                bubble.textContent = msg.content;
+                                wrapper.appendChild(bubble);
+                            } else {
+                                const response = document.createElement('div');
+                                response.className = 'assistant-response';
+                                try {
+                                    const html = DOMPurify.sanitize(marked.parse(msg.content));
+                                    response.innerHTML = `
+                                        <div class="response-content">${html}</div>
+                                        <div class="time-used"></div>
+                                    `;
+                                } catch (error) {
+                                    console.error('Error rendering message:', error);
+                                    response.innerHTML = `<p>Error rendering message: ${error.message}</p>`;
+                                }
+                                wrapper.appendChild(response);
+                                const html = DOMPurify.sanitize(marked.parse(msg.content));
+                                response.innerHTML = `
+                                    <div class="response-content">${html}</div>
+                                    <div class="time-used"></div>
+                                `;
+                                wrapper.appendChild(response);
+                            }
+                            chatArea.appendChild(wrapper);
+                        });
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                        const chat = chats.find(c => c.id === chatId);
+                        chatTitle.textContent = chat ? chat.name : 'New Chat';
+                    });
+                }
+        }
+
+        // Create new chat
+        document.getElementById('create-chat').addEventListener('click', function() {
+            fetch('/chats', { method: 'POST' })
+                .then(response => response.json())
+                .then(newChat => {
+                    chats.push(newChat);
+                    //fetchChats();
+                    selectChat(newChat.id);
+                });
+        });
+
         // Chat functionality
         chatTitle.addEventListener('mouseover', () => {
             if (chatStarted && !chatTitle.classList.contains('editing')) {
@@ -1092,13 +1232,13 @@
         });
 
         chatTitle.addEventListener('input', () => {
-            chatTitle.scrollLeft = 0; // Keep start of text visible during typing
+            chatTitle.scrollLeft = 0;
         });
 
         chatTitle.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                chatTitle.blur(); // Trigger blur to save the title
+                chatTitle.blur();
             }
         });
 
@@ -1111,108 +1251,211 @@
             chatTitle.classList.remove('editing');
             chatTitle.style.border = '1px solid transparent';
             chatTitle.scrollLeft = 0;
+            if (currentChatId) {
+                fetch(`/chats/${currentChatId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: text })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        fetchChats();
+                    }
+                });
+            }
         });
 
-        // Upload icon click triggers file input
+        // Upload icon click
         document.getElementById('upload-icon').addEventListener('click', function() {
+            console.log('Upload icon clicked'); 
             document.getElementById('file-input').click();
-        });     
+        });
 
         messageInput.addEventListener('click', function(e) {
-            e.stopPropagation(); // Ensure textarea click doesn't trigger file input
-            messageInput.focus(); // Explicitly focus the textarea
+            e.stopPropagation();
+            messageInput.focus();
         });
-
+        
         // Handle file selection and upload
         document.getElementById('file-input').addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 uploadFile(file);
-                this.value = ''; 
+                this.value = '';
             }
         });
 
         function uploadFile(file) {
+            if (!currentChatId) {
+                fetch('/chats', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(newChat => {
+                        currentChatId = newChat.id;
+                        chats.push(newChat);
+                        doUpload(file, newChat.id);
+                    });
+            } else {
+                doUpload(file, currentChatId);
+            }
+        }
+
+        function doUpload(file, chatId) {
+            const sendIcon = document.getElementById('send-icon');
             const formData = new FormData();
+            const chatIdStr = String(chatId);
             formData.append('file', file);
+            formData.append('chat_id', chatIdStr);
             fetch('/upload', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    documentUploaded = true;
-                    // Activate chat interface if not already started
-                    if (!chatStarted) {
-                        chatStarted = true;
-                        chatArea.classList.add('active');
-                        chatArea.querySelector('.greeting').remove();
-                        titleContainer.style.display = 'block';
-                        topIcons.style.display = 'flex';
-                        //chatSearch.style.display = 'block';
-                        chatTitle.textContent = 'New Chat';
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || 'Unknown error');
+                        });
                     }
-                    // Enable send icon and update placeholder
-                    document.getElementById('message-input').placeholder = 'Message TextInsight';
-                    document.getElementById('message-input').disabled = false;
-                    document.getElementById('send-icon').style.pointerEvents = 'auto';
-                    document.getElementById('send-icon').style.opacity = '1';
-                    // Display assistant's acknowledgment message
-                    const assistantMessageWrapper = document.createElement('div');
-                    assistantMessageWrapper.className = 'message-wrapper';
-                    const responseArea = document.createElement('div');
-                    responseArea.className = 'assistant-response';
-                    responseArea.innerHTML = `
-                        <div class="response-content">
-                            <p>${data.message}</p>
-                        </div>
-                        <div class="time-used"></div>
-                    `;
-                    assistantMessageWrapper.appendChild(responseArea);
-                    chatArea.appendChild(assistantMessageWrapper);
-                    chatArea.scrollTop = chatArea.scrollHeight;
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        console.log('File uploaded successfully');
+                        documentUploaded = true;
+                        chatStarted = true;
+                        // Update chats array to include the new chat
+                        const newChat = {
+                            id: data.chat_id,
+                            name: data.chat_name,
+                            created_at: new Date().toISOString(),
+                            last_modified: new Date().toISOString()
+                        };
+                        chats.push(newChat);
+                        if (chatIdStr.startsWith('temp_')) {
+                            currentChatId = data.chat_id;
+                            // Update chat title immediately
+                            chatTitle.textContent = data.chat_name;
+                            // Refresh sidebar and select the new chat
+                            fetchChats();
+                            selectChat(currentChatId);
+                        } else {
+                            // chatArea.innerHTML = '';
+                            titleContainer.style.display = 'block';
+                            topIcons.style.display = 'flex';
+                            messageInput.placeholder = 'Message TextInsight';
+                            messageInput.disabled = false;
+                            sendIcon.classList.remove('disabled');
+                            // Display user and assistant messages
+                            const userMessageWrapper = document.createElement('div');
+                            userMessageWrapper.className = 'message-wrapper';
+                            const userBubble = document.createElement('div');
+                            userBubble.className = 'chat-bubble user';
+                            userBubble.textContent = `I have uploaded a document named '${file.name}'`;
+                            userMessageWrapper.appendChild(userBubble);
+                            chatArea.appendChild(userMessageWrapper);
+                            const assistantMessageWrapper = document.createElement('div');
+                            assistantMessageWrapper.className = 'message-wrapper';
+                            const responseArea = document.createElement('div');
+                            responseArea.className = 'assistant-response';
+                            const html = DOMPurify.sanitize(marked.parse(data.message));
+                            responseArea.innerHTML = `
+                                <div class="response-content">${html}</div>
+                                <div class="time-used"></div>
+                            `;
+                            assistantMessageWrapper.appendChild(responseArea);
+                            chatArea.appendChild(assistantMessageWrapper);
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                            // Update chat title immediately
+                            chatTitle.textContent = data.chat_name;
+                            // Refresh sidebar
+                            fetchChats();
+                        }
+                    } else {
+                        console.error('Error uploading file:', data.error);
+                        alert(`Error uploading document: ${data.error}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading file:', error);
+                    alert(`Error uploading document: ${error.message}`);
+                });
+        }       
+        // function uploadFile(file) {
+        //     const formData = new FormData();
+        //     formData.append('file', file);
+        //     fetch('/upload', {
+        //         method: 'POST',
+        //         body: formData
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             documentUploaded = true;
+        //             // Activate chat interface if not already started
+        //             if (!chatStarted) {
+        //                 chatStarted = true;
+        //                 chatArea.classList.add('active');
+        //                 chatArea.querySelector('.greeting').remove();
+        //                 titleContainer.style.display = 'block';
+        //                 topIcons.style.display = 'flex';
+        //                 //chatSearch.style.display = 'block';
+        //                 chatTitle.textContent = 'New Chat';
+        //             }
+        //             // Enable send icon and update placeholder
+        //             document.getElementById('message-input').placeholder = 'Message TextInsight';
+        //             document.getElementById('message-input').disabled = false;
+        //             document.getElementById('send-icon').style.pointerEvents = 'auto';
+        //             document.getElementById('send-icon').style.opacity = '1';
+        //             // Display assistant's acknowledgment message
+        //             const assistantMessageWrapper = document.createElement('div');
+        //             assistantMessageWrapper.className = 'message-wrapper';
+        //             const responseArea = document.createElement('div');
+        //             responseArea.className = 'assistant-response';
+        //             responseArea.innerHTML = `
+        //                 <div class="response-content">
+        //                     <p>${data.message}</p>
+        //                 </div>
+        //                 <div class="time-used"></div>
+        //             `;
+        //             assistantMessageWrapper.appendChild(responseArea);
+        //             chatArea.appendChild(assistantMessageWrapper);
+        //             chatArea.scrollTop = chatArea.scrollHeight;
 
-                    // const assistantMessageWrapper = document.createElement('div');
-                    // assistantMessageWrapper.className = 'message-wrapper';
-                    // const responseArea = document.createElement('div');
-                    // responseArea.className = 'assistant-response';
-                    // responseArea.innerHTML = `
-                    //     <div class="loading">Generating response...</div>
-                    //     <div class="response-content"></div>
-                    //     <div class="time-used"></div>
-                    // `;
-                    // assistantMessageWrapper.appendChild(responseArea);
-                    // chatArea.appendChild(assistantMessageWrapper);
+        //             // const assistantMessageWrapper = document.createElement('div');
+        //             // assistantMessageWrapper.className = 'message-wrapper';
+        //             // const responseArea = document.createElement('div');
+        //             // responseArea.className = 'assistant-response';
+        //             // responseArea.innerHTML = `
+        //             //     <div class="loading">Generating response...</div>
+        //             //     <div class="response-content"></div>
+        //             //     <div class="time-used"></div>
+        //             // `;
+        //             // assistantMessageWrapper.appendChild(responseArea);
+        //             // chatArea.appendChild(assistantMessageWrapper);
 
-                } else {
-                    alert('Failed to upload document: ' + data.error);                
-                }
-            })
-            .catch(error => {
-                console.error('Error uploading file:', error.message);
-                alert('Error uploading document. Please try again.');
-            });
-        }
+        //         } else {
+        //             alert('Failed to upload document: ' + data.error);                
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error uploading file:', error.message);
+        //         alert('Error uploading document. Please try again.');
+        //     });
+        // }
 
         async function sendMessage() {
-            if (!documentUploaded || isGenerating) return; // Check if document is uploaded and no response is generating
+            const chatIdStr = String(currentChatId);  // Convert currentChatId to string
+            if (!documentUploaded || isGenerating || chatIdStr.startsWith('temp_')) {
+                if (chatIdStr.startsWith('temp_')) {
+                    alert('Please upload a document before asking questions.');
+                }
+                return;
+            }
             const message = messageInput.value.trim();
-            if (!message) return;
+            if (!message) return;       
 
             // Clear the input immediately after sending
             messageInput.value = '';
-            autoResizeTextarea();
-
-            // if (!chatStarted) {
-            //     chatStarted = true;
-            //     chatArea.classList.add('active');
-            //     chatArea.querySelector('.greeting').remove();
-            //     titleContainer.style.display = 'block';
-            //     topIcons.style.display = 'flex';
-            //     chatSearch.style.display = 'block';
-            //     chatTitle.textContent = 'New Chat';
-            // }
+            autoResizeTextarea();       
 
             const userMessageWrapper = document.createElement('div');
             userMessageWrapper.className = 'message-wrapper';
@@ -1220,55 +1463,47 @@
             userBubble.className = 'chat-bubble user';
             userBubble.textContent = message;
             userMessageWrapper.appendChild(userBubble);
-            chatArea.appendChild(userMessageWrapper);
+            chatArea.appendChild(userMessageWrapper);       
 
             const assistantMessageWrapper = document.createElement('div');
             assistantMessageWrapper.className = 'message-wrapper';
             const responseArea = document.createElement('div');
             responseArea.className = 'assistant-response';
-            // responseArea.innerHTML = `
-            //     <div class="response-content">
-            //         <div class="loading">Generating response...</div>
-            //     </div>
-            //     <div class="time-used"></div>
-            // `;
             responseArea.innerHTML = `
                 <div class="loading">Generating response...</div>
                 <div class="response-content"></div>
                 <div class="time-used"></div>
             `;
             assistantMessageWrapper.appendChild(responseArea);
-            chatArea.appendChild(assistantMessageWrapper);
+            chatArea.appendChild(assistantMessageWrapper);      
 
             const startTime = Date.now();
             try {
                 isGenerating = true;
                 document.getElementById('send-icon').style.pointerEvents = 'none';
                 document.getElementById('send-icon').style.opacity = '0.5';
-                document.getElementById('message-input').disabled = true;
+                document.getElementById('message-input').disabled = true;       
 
                 const response = await fetch('/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
+                    body: JSON.stringify({ chat_id: currentChatId, message })
+                });     
 
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.error || 'Unknown server error');
-                }
+                }       
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let result = '';
+                let result = '';        
 
                 async function read() {
                     const { done, value } = await reader.read();
                     if (done) {
                         const spinner = responseArea.querySelector('.loading');
                         if (spinner) spinner.style.display = 'none';
-
-                        //responseArea.querySelector('.loading').style.display = 'none';
                         if (result.trim() === '') {
                             responseArea.querySelector('.response-content').innerHTML = '<p>Server is busy. Please try again later.</p>';
                         }
@@ -1279,8 +1514,10 @@
                         document.getElementById('send-icon').style.pointerEvents = 'auto';
                         document.getElementById('send-icon').style.opacity = '1';
                         document.getElementById('message-input').disabled = false;
+                        // Refresh sidebar after message is fully processed
+                        fetchChats();
                         return;
-                    }
+                    }       
 
                     const chunk = decoder.decode(value);
                     result += chunk;
@@ -1288,11 +1525,11 @@
                     responseArea.querySelector('.response-content').innerHTML = html;
                     chatArea.scrollTop = chatArea.scrollHeight;
                     read();
-                }
+                }       
 
                 await read();
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error:', error.message);
                 responseArea.querySelector('.loading').style.display = 'none';
                 responseArea.querySelector('.response-content').innerHTML = `<p>${error.message || 'Server is busy. Please try again later.'}</p>`;
                 const endTime = Date.now();
@@ -1302,47 +1539,58 @@
                 document.getElementById('send-icon').style.pointerEvents = 'auto';
                 document.getElementById('send-icon').style.opacity = '1';
                 document.getElementById('message-input').disabled = false;
-            }
+            }       
 
             chatArea.scrollTop = chatArea.scrollHeight;
         }
-
+        
         function copyResponse(text) {
             navigator.clipboard.writeText(text);
             alert('Response copied!');
         }
 
         function deleteChat() {
-            chatArea.innerHTML = '<div class="greeting"><h2>Hi, I\'m TextInsight</h2><p>Upload a document so I can help you.</p></div>';
-            titleContainer.style.display = 'none';
-            topIcons.style.display = 'none';
-            //chatSearch.style.display = 'none';
-            chatStarted = false;
-            documentUploaded = false; // Reset document upload status
-            document.getElementById('send-icon').style.pointerEvents = 'none';
-            document.getElementById('send-icon').style.opacity = '0.5';
-            document.getElementById('message-input').placeholder = 'Upload a document to start chatting';
-            document.getElementById('message-input').disabled = false;
-            autoResizeTextarea();
+            if (!chatId || chatId.startsWith('temp_')) return;
+            // if (!currentChatId) return;
+            if (confirm('Are you sure you want to delete this chat?')) {
+                fetch(`/chats/${currentChatId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            chats = chats.filter(chat => chat.id !== currentChatId);
+                            fetchChats();
+                            chatArea.innerHTML = '<div class="greeting"><h2>Hi, I\'m TextInsight</h2><p>Upload a document so I can help you.</p></div>';
+                            titleContainer.style.display = 'none';
+                            topIcons.style.display = 'none';
+                            chatStarted = false;
+                            documentUploaded = false;
+                            currentChatId = null;
+                            document.getElementById('send-icon').style.pointerEvents = 'none';
+                            document.getElementById('send-icon').style.opacitycakes = '0.5';
+                            messageInput.placeholder = 'Upload a document to start chatting';
+                            messageInput.disabled = true;
+                            autoResizeTextarea();
+                        }
+                    });
+            }
         }
 
         function exportChat() {
-            const chatContent = Array.from(chatArea.querySelectorAll('.chat-bubble, .response-content'))
-                .map(element => {
-                    if (element.classList.contains('chat-bubble')) {
-                        return `You: ${element.textContent}`;
-                    } else {
-                        return `TextInsight: ${element.textContent}`;
-                    }
-                })
-                .join('\n');
-            const blob = new Blob([chatContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'chat.txt';
-            a.click();
-            URL.revokeObjectURL(url);
+            if (!chatId || chatId.startsWith('temp_')) return;
+            // if (!currentChatId) return;
+            fetch(`/chats/${currentChatId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    const chatContent = messages.map(msg => {
+                        return `${msg.role === 'user' ? 'You' : 'TextInsight'}: ${msg.content}`;
+                    }).join('\n');
+                    const blob = new Blob([chatContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `chat_${currentChatId}.txt`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
         }
 
         messageInput.addEventListener('keypress', (e) => {

@@ -13,7 +13,7 @@ class preprocess:
         text = preprocess.clear_noise(text)
         tokens = preprocess.tokenize_tokens(text)
         tokens=  preprocess.lemmatizing_tokens(tokens)
-        return tokens
+        return ' '.join(tokens)
         
 
     def clear_noise(text):
