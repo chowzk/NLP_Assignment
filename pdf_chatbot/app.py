@@ -21,7 +21,6 @@ import speech_recognition as sr
 
 app = Flask(__name__)
 tts_instance = TTS()
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///memory'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chats.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -194,7 +193,7 @@ def ask():
         return jsonify({'error': 'Chat not found'}), 404
     
     # Check if the query is relevant
-    success, message = pdf_Extractor.is_query_relevant(user_input)
+    success, message = pdf_Extractor.is_query_relevant(db,user_input)
     if not success:
         return jsonify({'error': message}), 400
 
