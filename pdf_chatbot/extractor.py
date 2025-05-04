@@ -68,13 +68,13 @@ class pdf_Extractor:
             return None
 
     @staticmethod
-    def is_duplicate(db, new_text, threshold=0.8):
+    def is_duplicate(db, chat_id, new_text, threshold=0.8):
         """Check if the new text is a duplicate by comparing it with all existing documents."""
         from app import Document as SQLDocument  # Lazy import
         try:
-            existing_texts = [doc.cleaned_text for doc in db.session.query(SQLDocument).all()]
+            existing_texts = [doc.cleaned_text for doc in db.session.query(SQLDocument).filter_by(chat_id=chat_id).all()]
             if not existing_texts:
-                return False
+                return False  # No documents in this chat, so not a duplicate
             texts_to_compare = existing_texts + [new_text]
             vectorizer = TfidfVectorizer(stop_words='english')
             tfidf_matrix = vectorizer.fit_transform(texts_to_compare)
@@ -99,8 +99,8 @@ class pdf_Extractor:
             if raw_text is None:
                 return False, "Failed to read file (unsupported extension or file error)", None
             cleaned_text = preprocess.clean_text(raw_text)
-            if pdf_Extractor.is_duplicate(db, cleaned_text):
-                return False, "Document is too similar to an existing one", None
+            if pdf_Extractor.is_duplicate(db, chat_id, cleaned_text):
+                return False, "Document is too similar to an existing one in this chat", None
             new_doc = SQLDocument(chat_id=chat_id, filename=filename, cleaned_text=cleaned_text)
             db.session.add(new_doc)
             db.session.commit()
