@@ -74,6 +74,24 @@
             overflow-x: hidden;
         }
 
+        .play-icon, .stop-icon, #mic-icon img { 
+            width: 20px; 
+            height: 20px; 
+            cursor: pointer; 
+        }
+
+        .response-actions { 
+            display: flex; 
+            gap: 5px; 
+            margin-top: 5px; 
+            justify-content: flex-start; /* Align buttons to the start */
+            margin-left: 0; /* Ensure no left margin offset */
+        }
+        
+        #mic-icon.recording img { 
+            filter: brightness(1.5); 
+        }
+
         .list-group-item {
             background-color: transparent;
             border: none;
@@ -746,7 +764,7 @@
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text rounded-start">🔍</span>
-                    <input type="text" class="form-control rounded-end bg-dark text-white" placeholder="Search chats...">
+                    <input type="text" id="chat-search" class="form-control rounded-end bg-dark text-white" placeholder="Search chats...">
                 </div>
                 <button id="create-chat" class="btn btn-primary w-100 mb-3">+ Create new chat</button>
                 <div class="chat-list">
@@ -824,6 +842,10 @@
                             <img src="../static/images/upload_light.png" alt="Upload" title="Upload Document" class="light-icon">
                         </div>
                         <textarea id="message-input" placeholder="Upload a document to start chatting"></textarea>
+                        <div class="icon-btn" id="mic-icon">
+                            <img src="../static/images/mic_light.png" alt="Microphone" title="Speak" class="dark-icon">
+                            <img src="../static/images/mic_dark.png" alt="Microphone" title="Speak" class="light-icon">
+                        </div>
                         <div class="icon-btn" onclick="sendMessage()" id="send-icon">
                             <img src="../static/images/send_dark.png" alt="Send" title="Send" class="dark-icon">
                             <img src="../static/images/send_light.png" alt="Send" title="Send" class="light-icon">
@@ -842,6 +864,9 @@
         let isGenerating = false;    // Track if a response is being generated
         let currentChatId = null;
         let chats = [];
+        let audioElement = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
         const chatArea = document.getElementById('chat-area');
         const inputArea = document.getElementById('input-area');
         const messageInput = document.getElementById('message-input');
@@ -1151,7 +1176,6 @@
             });
         });
 
-
         // Select a chat
         function selectChat(chatId) {
             const sendIcon = document.getElementById('send-icon');
@@ -1245,19 +1269,42 @@
                                     const html = DOMPurify.sanitize(marked.parse(msg.content));
                                     response.innerHTML = `
                                         <div class="response-content">${html}</div>
+                                        <div class="response-actions">
+                                            <img src="../static/images/play_dark.png" alt="Play" title="Play" class="play-icon dark-icon">
+                                            <img src="../static/images/play_light.png" alt="Play" title="Play" class="play-icon light-icon">
+                                            <img src="../static/images/stop_dark.png" alt="Stop" title="Stop" class="stop-icon dark-icon" style="display: none;">
+                                            <img src="../static/images/stop_light.png" alt="Stop" title="Stop" class="stop-icon light-icon" style="display: none;">
+                                        </div>
                                         <div class="time-used"></div>
                                     `;
+                                    const playIcon = response.querySelector('.play-icon');
+                                    const stopIcon = response.querySelector('.stop-icon');
+                                    const contentDiv = response.querySelector('.response-content');
+                                    playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon));
+                                    stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon));
                                 } catch (error) {
                                     console.error('Error rendering message:', error);
                                     response.innerHTML = `<p>Error rendering message: ${error.message}</p>`;
                                 }
                                 wrapper.appendChild(response);
-                                const html = DOMPurify.sanitize(marked.parse(msg.content));
-                                response.innerHTML = `
-                                    <div class="response-content">${html}</div>
-                                    <div class="time-used"></div>
-                                `;
-                                wrapper.appendChild(response);
+
+                                // try {
+                                //     const html = DOMPurify.sanitize(marked.parse(msg.content));
+                                //     response.innerHTML = `
+                                //         <div class="response-content">${html}</div>
+                                //         <div class="time-used"></div>
+                                //     `;
+                                // } catch (error) {
+                                //     console.error('Error rendering message:', error);
+                                //     response.innerHTML = `<p>Error rendering message: ${error.message}</p>`;
+                                // }
+                                // wrapper.appendChild(response);
+                                // const html = DOMPurify.sanitize(marked.parse(msg.content));
+                                // response.innerHTML = `
+                                //     <div class="response-content">${html}</div>
+                                //     <div class="time-used"></div>
+                                // `;
+                                // wrapper.appendChild(response);
                             }
                             chatArea.appendChild(wrapper);
                         });
@@ -1492,68 +1539,6 @@
                     alert(`Error uploading document: ${error.message}`);
                 });
         }       
-        // function uploadFile(file) {
-        //     const formData = new FormData();
-        //     formData.append('file', file);
-        //     fetch('/upload', {
-        //         method: 'POST',
-        //         body: formData
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.success) {
-        //             documentUploaded = true;
-        //             // Activate chat interface if not already started
-        //             if (!chatStarted) {
-        //                 chatStarted = true;
-        //                 chatArea.classList.add('active');
-        //                 chatArea.querySelector('.greeting').remove();
-        //                 titleContainer.style.display = 'block';
-        //                 topIcons.style.display = 'flex';
-        //                 //chatSearch.style.display = 'block';
-        //                 chatTitle.textContent = 'New Chat';
-        //             }
-        //             // Enable send icon and update placeholder
-        //             document.getElementById('message-input').placeholder = 'Message TextInsight';
-        //             document.getElementById('message-input').disabled = false;
-        //             document.getElementById('send-icon').style.pointerEvents = 'auto';
-        //             document.getElementById('send-icon').style.opacity = '1';
-        //             // Display assistant's acknowledgment message
-        //             const assistantMessageWrapper = document.createElement('div');
-        //             assistantMessageWrapper.className = 'message-wrapper';
-        //             const responseArea = document.createElement('div');
-        //             responseArea.className = 'assistant-response';
-        //             responseArea.innerHTML = `
-        //                 <div class="response-content">
-        //                     <p>${data.message}</p>
-        //                 </div>
-        //                 <div class="time-used"></div>
-        //             `;
-        //             assistantMessageWrapper.appendChild(responseArea);
-        //             chatArea.appendChild(assistantMessageWrapper);
-        //             chatArea.scrollTop = chatArea.scrollHeight;
-
-        //             // const assistantMessageWrapper = document.createElement('div');
-        //             // assistantMessageWrapper.className = 'message-wrapper';
-        //             // const responseArea = document.createElement('div');
-        //             // responseArea.className = 'assistant-response';
-        //             // responseArea.innerHTML = `
-        //             //     <div class="loading">Generating response...</div>
-        //             //     <div class="response-content"></div>
-        //             //     <div class="time-used"></div>
-        //             // `;
-        //             // assistantMessageWrapper.appendChild(responseArea);
-        //             // chatArea.appendChild(assistantMessageWrapper);
-
-        //         } else {
-        //             alert('Failed to upload document: ' + data.error);                
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error uploading file:', error.message);
-        //         alert('Error uploading document. Please try again.');
-        //     });
-        // }
 
         async function sendMessage() {
             const chatIdStr = String(currentChatId);  // Convert currentChatId to string
@@ -1585,10 +1570,22 @@
             responseArea.innerHTML = `
                 <div class="loading">Generating response...</div>
                 <div class="response-content"></div>
+                <div class="response-actions">
+                    <img src="../static/images/play_dark.png" alt="Play" title="Play" class="play-icon dark-icon">
+                    <img src="../static/images/play_light.png" alt="Play" title="Play" class="play-icon light-icon">
+                    <img src="../static/images/stop_dark.png" alt="Stop" title="Stop" class="stop-icon dark-style="display: none;">
+                    <img src="../static/images/stop_light.png" alt="Stop" title="Stop" class="stop-icon light-style="display: none;">
+                </div>
                 <div class="time-used"></div>
             `;
             assistantMessageWrapper.appendChild(responseArea);
             chatArea.appendChild(assistantMessageWrapper);      
+
+            const playIcon = responseArea.querySelector('.play-icon');
+            const stopIcon = responseArea.querySelector('.stop-icon');
+            const contentDiv = responseArea.querySelector('.response-content');
+            playIcon.addEventListener('click', () => playAudio(contentDiv.textContent, playIcon, stopIcon));
+            stopIcon.addEventListener('click', () => stopAudio(playIcon, stopIcon));
 
             const startTime = Date.now();
             try {
@@ -1705,6 +1702,93 @@
                     URL.revokeObjectURL(url);
                 });
         }
+
+        // TTS: Play audio from server
+        function playAudio(text, playIcon, stopIcon) {
+            if (audioElement && !audioElement.paused) {
+                audioElement.pause();
+                return;
+            }
+            fetch('/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+                audioElement = new Audio(data.audio_url);
+                audioElement.play();
+                playIcon.style.display = 'none';
+                stopIcon.style.display = 'inline';
+                audioElement.onended = () => {
+                    playIcon.style.display = 'inline';
+                    stopIcon.style.display = 'none';
+                };
+            })
+            .catch(error => {
+                console.error('TTS Error:', error);
+                alert('Failed to generate audio: ' + error.message);
+            });
+        }
+
+        // TTS: Stop audio
+        function stopAudio(playIcon, stopIcon) {
+            if (audioElement) {
+                audioElement.pause();
+                audioElement.currentTime = 0;
+                playIcon.style.display = 'inline';
+                stopIcon.style.display = 'none';
+            }
+        }
+
+        // // STT: Handle microphone recording
+        // document.getElementById('mic-icon').addEventListener('click', () => {
+        //     if (!documentUploaded || String(currentChatId).startsWith('temp_')) {
+        //         alert('Please upload a document before using speech input.');
+        //         return;
+        //     }
+        //     if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        //         navigator.mediaDevices.getUserMedia({ audio: true })
+        //             .then(stream => {
+        //                 mediaRecorder = new MediaRecorder(stream);
+        //                 audioChunks = [];
+        //                 mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+        //                 mediaRecorder.onstop = sendAudioToServer;
+        //                 mediaRecorder.start();
+        //                 document.getElementById('mic-icon').classList.add('recording');
+        //             })
+        //             .catch(error => {
+        //                 console.error('Microphone Error:', error);
+        //                 alert('Microphone access denied or unavailable');
+        //             });
+        //     } else if (mediaRecorder.state === 'recording') {
+        //         mediaRecorder.stop();
+        //         mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        //         document.getElementById('mic-icon').classList.remove('recording');
+        //     }
+        // });
+
+        // // STT: Send recorded audio to server
+        // function sendAudioToServer() {
+        //     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        //     const formData = new FormData();
+        //     formData.append('audio', audioBlob, 'recording.webm');
+        //     fetch('/stt', {
+        //         method: 'POST',
+        //         body: formData
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.error) throw new Error(data.error);
+        //         messageInput.value = data.text;
+        //         autoResizeTextarea();
+        //     })
+        //     .catch(error => {
+        //         console.error('STT Error:', error);
+        //         alert('Failed to transcribe audio: ' + error.message);
+        //     });
+        // }
 
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

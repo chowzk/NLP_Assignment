@@ -8,6 +8,11 @@ from extractor import pdf_Extractor
 import os
 import re
 import logging
+from textToSpeech import TTS
+from pydub import AudioSegment
+from pydub.utils import which
+import speech_recognition as sr
+
 ## Run this for the first time 
 # nltk.download('punkt', quiet=True)
 # nltk.download('stopwords', quiet=True)
@@ -15,6 +20,7 @@ import logging
 # nltk.download('punkt_tab', quiet=True)
 
 app = Flask(__name__)
+tts_instance = TTS()
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///memory'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chats.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -388,64 +394,152 @@ def delete_document(document_id):
     db.session.commit()
     return '', 204
 
+@app.route('/voice_input', methods=['POST'])
+def voice_input():
+    data = request.json
+    chat_id = data.get('chat_id')
+    if not chat_id:
+        return jsonify({'error': 'chat_id is required'}), 400
+    try:
+        chat_id_int = int(chat_id)
+    except ValueError:
+        return jsonify({'error': 'Invalid chat ID'}), 400
+    chat = db.session.get(Chat, chat_id_int)
+    if not chat:
+        return jsonify({'error': 'Chat not found'}), 404
+
+    # Capture and recognize speech
+    user_input = TTS.speech_to_text()
+    if user_input is None:
+        return jsonify({'error': 'Failed to recognize speech'}), 400
+
+    # Format the recognized text
+    formatted_input = TTS.format_sentence(user_input)
+
+    # Save user message to database
+    user_message = Message(
+        chat_id=chat_id_int,
+        role="user",
+        content=formatted_input,
+        timestamp=datetime.now(timezone.utc)
+    )
+    db.session.add(user_message)
+    db.session.commit()
+
+    # Get chatbot response
+    messages = Message.query.filter_by(chat_id=chat_id_int).order_by(Message.timestamp.asc()).all()
+    conversation_history = [{"role": "system", "content": "You are a helpful assistant."}] + \
+                          [{"role": msg.role, "content": msg.content} for msg in messages]
+    try:
+        response = client.chat.completions.create(
+            model="deepseek/deepseek-r1:free",
+            messages=conversation_history,
+            stream=False
+        )
+        assistant_content = response.choices[0].message.content.strip()
+    except Exception as e:
+        logger.error(f"Error getting chatbot response: {str(e)}")
+        return jsonify({'error': 'Failed to get chatbot response'}), 500
+
+    # Save assistant message to database
+    assistant_message = Message(
+        chat_id=chat_id_int,
+        role="assistant",
+        content=assistant_content,
+        timestamp=datetime.now(timezone.utc)
+    )
+    db.session.add(assistant_message)
+    db.session.commit()
+
+    # Convert response to speech and play it
+    TTS.text_to_speech(assistant_content)
+
+    # Return text for client display
+    return jsonify({
+        'user_input': formatted_input,
+        'assistant_response': assistant_content
+    })
+
+@app.route('/tts', methods=['POST'])
+def text_to_speech():
+    data = request.get_json()
+    text = data.get('text')
+    if not text:
+        return jsonify({'error': 'Text is required'}), 400
+    try:
+        audio_file = tts_instance.text_to_speech(text)
+        audio_url = f"/static/{os.path.basename(audio_file)}"
+        return jsonify({'audio_url': audio_url})
+    except Exception as e:
+        logger.error(f"TTS error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+
+@app.route('/stt', methods=['POST'])
+def speech_to_text():
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio file provided'}), 400
+
+    audio_file = request.files['audio']
+    audio_path = 'temp_audio.wav'
+    
+    try:
+        # Save the audio file temporarily
+        audio_file.save(audio_path)
+        print(f"[INFO] Audio file saved: {audio_path}")
+
+        # Recognize speech using Google Speech Recognition
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(audio_path) as source:
+            print("[INFO] Reading audio data...")
+            audio_data = recognizer.record(source)
+
+        print("[INFO] Recognizing speech...")
+        text = recognizer.recognize_google(audio_data)
+        print(f"[INFO] Transcription successful: {text}")
+        return jsonify({'text': text})
+
+    except sr.UnknownValueError:
+        return jsonify({'text': "error: Could not understand audio."})
+    except sr.RequestError as e:
+        return jsonify({'text': f"error: Google API error: {str(e)}"})
+    except Exception as e:
+        return jsonify({'text': f"error: {str(e)}"})
+    finally:
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+            print(f"[INFO] Temporary audio file deleted: {audio_path}")
+
+
+# @app.route('/stt', methods=['POST'])
+# def speech_to_text():
+#     if 'audio' not in request.files:
+#         return jsonify({'error': 'No audio file provided'}), 400
+#     audio_file = request.files['audio']
+#     temp_webm = "temp_recording.webm"
+#     temp_wav = "temp_audio.wav"
+#     try:
+#         audio_file.save(temp_webm)
+#         # Convert WebM to WAV
+#         try:
+#             audio = AudioSegment.from_file(temp_webm, format="webm")
+#             audio.export(temp_wav, format="wav")
+#         except FileNotFoundError as e:
+#             logger.error(f"FFmpeg not found: {str(e)}")
+#             return jsonify({'error': 'FFmpeg is not installed or not in PATH. Please install FFmpeg.'}), 500
+#         text = tts_instance.speech_to_text_from_file(temp_wav)
+#         if text is None:
+#             return jsonify({'error': 'Could not transcribe audio'}), 400
+#         return jsonify({'text': text})
+#     except Exception as e:
+#         logger.error(f"STT error: {str(e)}")
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         # Clean up temporary files
+#         for temp_file in [temp_webm, temp_wav]:
+#             if os.path.exists(temp_file):
+#                 os.remove(temp_file)
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-# @app.route('/ask', methods=['POST'])
-# def ask():
-#     user_input = request.json.get('message')  # Get user input from frontend
-#     if not user_input:
-#         return jsonify({'error': 'No message provided'}), 400
-
-#     # Get the response from the chatbot logic module
-#     assistant_response = get_chatbot_response(user_input)
-
-#     return jsonify({'response': assistant_response})
-
-
-# @app.route('/upload', methods=['POST'])
-# def upload_file():
-#     if 'file' not in request.files:
-#         return jsonify({'success': False, 'error': 'No file provided'}), 400
-#     file = request.files['file']
-#     if file.filename == '':
-#         return jsonify({'success': False, 'error': 'No file selected'}), 400
-    
-#     # Save file temporarily
-#     temp_path = os.path.join('temp', file.filename)
-#     file.save(temp_path)
-    
-#     # Process file with extractor
-#     success, message, raw_text = pdf_Extractor.process_file(temp_path)
-#     os.remove(temp_path)  # Clean up
-#     if success:
-#         # Generate summary using the LLM
-#         summary_prompt = f"Summarize the following document in 100-200 words:\n\n{raw_text}"
-#         try:
-#             summary_response = client.chat.completions.create(
-#                 model="deepseek/deepseek-r1:free",
-#                 messages=[{"role": "user", "content": summary_prompt}],
-#                 max_tokens=200
-#             )
-#             summary = summary_response.choices[0].message.content.strip()
-#         except Exception as e:
-#             summary = "Unable to generate summary due to an error."
-#             print(f"Error generating summary: {str(e)}")
-        
-#         # Include file name and summary in conversation history
-#         conversation_history.append({
-#             "role": "user",
-#             "content": f"I have uploaded a document named '{file.filename}'. Here is a summary: {summary}"
-#         })
-#         conversation_history.append({
-#             "role": "assistant",
-#             "content": f"Thank you for uploading the document '{file.filename}'. I have summarized it and can now answer questions based on the summary."
-#         })
-
-#         print(conversation_history)
-#         return jsonify({
-#             'success': True,
-#             'message': f"Thank you for uploading the document '{file.filename}'. I have summarized it and can now answer questions based on the summary."
-#         })
-#     else:
-#         return jsonify({'success': False, 'error': message}), 400
