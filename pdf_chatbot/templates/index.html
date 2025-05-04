@@ -511,6 +511,17 @@
             cursor: pointer;
         }
 
+        .top-icons {
+            align-items: center;
+        }
+
+        .doc-icon img {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
         /* .chat-search {
             display: none;
             position: absolute;
@@ -630,6 +641,35 @@
             align-items: center;
         }
 
+        .document-upload {
+            display: flex;
+            align-items: center;
+            background-color: var(--bubble-user);
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%; /* Restrict width to prevent overflow */
+            margin: 10px 0;
+            align-self: flex-end;
+            color: white;
+            font-size: 14px;
+            word-break: break-word; /* Ensures text wraps properly */
+            box-sizing: border-box; /* Includes padding in width calculation */
+            cursor: pointer;
+        }
+
+        .document-upload img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        .document-upload .filename {
+            margin-right: 5px;
+            white-space: nowrap; /* Keeps filename on one line */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adds ellipsis if text overflows */
+            max-width: 100%; /* Limits filename width within the container */
+        }
+
         .chat-bubble {
             max-width: 900px;
             padding: 10px 15px;
@@ -689,6 +729,58 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure modal is above other content */
+        }
+
+        .modal-content {
+            background-color: var(--chat-bg);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            max-height: 80vh; /* Adjusted for better viewport fit */
+            overflow: auto;
+            color: var(--text-color);
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .close-button {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-color);
+            background: none;
+            border: none;
+            padding: 0 5px;
+        }
+
+        .close-button:hover {
+            color: #ff4444; 
+        }
+
+        #modal-filename {
+            font-weight: bold;
+            margin-bottom: 10px;
+            word-break: break-all; /* Allow filename to wrap if long */
+        }
+
+        #modal-content {
+            font-family: monospace;
+            white-space: pre-wrap; /* Preserve formatting and wrap text */
+            margin: 0;
+            padding: 10px 0;
         }
 
         .input-container {
@@ -785,6 +877,10 @@
                         <img src="../static/images/logo_dark.png" alt="Dark Logo" class="logo-img logo-dark">
                         <img src="../static/images/logo_light.png" alt="Light Logo" class="logo-img logo-light">
                     </div>
+                    <div class="doc-icon" id="doc-icon">
+                        <img src="../static/images/document_dark.png" alt="Documents" title="View Documents" class="dark-icon">
+                        <img src="../static/images/document_light.png" alt="Documents" title="View Documents" class="light-icon">
+                    </div>    
                     <div>
                         <button id="toggle-theme" class="btn btn-outline-light btn-sm">🌙</button>
                     </div>
@@ -813,8 +909,8 @@
                         <span class="chat-title" contenteditable="false">New Chat</span>
                     </div>
                     <div class="top-icons" id="top-icons">
-                        <img src="../static/images/document_dark.png" alt="Documents" title="View Documents" class="dark-icon">
-                        <img src="../static/images/document_light.png" alt="Documents" title="View Documents" class="light-icon">
+                        <!-- <img src="../static/images/document_dark.png" alt="Documents" title="View Documents" class="dark-icon">
+                        <img src="../static/images/document_light.png" alt="Documents" title="View Documents" class="light-icon"> -->
                         <div class="dropdown">
                             <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="../static/images/more_dark.png" alt="More" title="More Options" class="dark-icon">
@@ -831,6 +927,13 @@
                     <div class="greeting">
                         <h2>Hi, I'm TextInsight</h2>
                         <p>Upload a document so I can help you.</p>
+                    </div>
+                </div>
+                <div id="document-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <h3 id="modal-filename"></h3>
+                        <pre id="modal-content"></pre>
                     </div>
                 </div>
                 <div class="input-area" id="input-area">
@@ -1160,11 +1263,29 @@
                             const wrapper = document.createElement('div');
                             wrapper.className = 'message-wrapper';
                             if (msg.role === 'user') {
-                                const bubble = document.createElement('div');
-                                bubble.className = 'chat-bubble user';
-                                bubble.textContent = msg.content;
-                                wrapper.appendChild(bubble);
-                            } else {
+                                // Check if the message is a document upload
+                                const uploadRegex = /I have uploaded a document named '(.+?)' with the following content: ([\s\S]*)/;
+                                const match = msg.content.match(uploadRegex);
+                                if (match) {
+                                    const filename = match[1];
+                                    const content = match[2].trim();
+                                    const uploadElement = document.createElement('div');
+                                    uploadElement.className = 'document-upload';
+                                    uploadElement.innerHTML = `
+                                        <img src="../static/images/yellow_doc_icon.png" alt="Document Icon">
+                                        <span class="filename">${filename}</span>
+                                    `;
+                                    uploadElement.addEventListener('click', () => {
+                                        showDocumentModal(filename, content);
+                                    });
+                                    wrapper.appendChild(uploadElement);
+                                } else {
+                                    const bubble = document.createElement('div');
+                                    bubble.className = 'chat-bubble user';
+                                    bubble.textContent = msg.content;
+                                    wrapper.appendChild(bubble);
+                                }
+                                } else {
                                 const response = document.createElement('div');
                                 response.className = 'assistant-response';
                                 try {
@@ -1192,6 +1313,27 @@
                         chatTitle.textContent = chat ? chat.name : 'New Chat';
                     });
                 }
+        }
+
+        function showDocumentModal(filename, content) {
+            const modal = document.getElementById('document-modal');
+            const modalFilename = document.getElementById('modal-filename');
+            const modalContent = document.getElementById('modal-content');
+            const closeButton = document.querySelector('.close-button');
+
+            modalFilename.textContent = filename;
+            modalContent.textContent = content; // Display raw text with preserved formatting
+            modal.style.display = 'flex';
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         }
 
         // Create new chat
@@ -1598,6 +1740,21 @@
                 e.preventDefault();
                 sendMessage();
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('document-modal');
+            const closeButton = document.querySelector('.close-button');
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

@@ -8,6 +8,7 @@ from extractor import pdf_Extractor
 import os
 import re
 import logging
+## Run this for the first time 
 # nltk.download('punkt', quiet=True)
 # nltk.download('stopwords', quiet=True)
 # nltk.download('wordnet', quiet=True)
