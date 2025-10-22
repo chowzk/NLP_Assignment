@@ -5,9 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 # Initialise OpenAI client
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key="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",
-    # api_key="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",  # exceed limit
+    base_url="BASE_URL HERE",
+    api_key="API_KEY HERE"
 )
 
 # Initialise conversation history
